@@ -14,6 +14,7 @@ public interface FormattingUtils {
 	Pattern REMOVE_WEIRD_CHARACTERS = Pattern.compile("[^\\w-.]");
 	Pattern REMOVE_DASHES = Pattern.compile("-{2,}");
 	Pattern NON_W_PATTERN = Pattern.compile("\\W");
+	Pattern STACK_AT_PATTERN = Pattern.compile("([ \\t]+at )([\\w./$@]+)\\.([\\w/$]+)\\.(<init>|[\\w$]+)\\((Unknown Source|\\.dynamic|Native Method|[\\w.$]+:\\d+)\\)(?: ~?\\[.*:.*])?(?: \\{.*})?");
 	Calendar FORMAT_CALENDAR = Calendar.getInstance();
 
 	String[] MONTH_NAMES = {

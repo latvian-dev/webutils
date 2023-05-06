@@ -25,7 +25,7 @@ public class MutableInt {
 		return String.valueOf(value);
 	}
 
-	public static int valueOf(@Nullable MutableInt v) {
-		return v == null ? 0 : v.value;
+	public static int valueOf(@Nullable MutableInt v, int def) {
+		return v == null ? def : v.value;
 	}
 }

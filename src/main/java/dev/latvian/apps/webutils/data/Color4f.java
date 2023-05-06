@@ -1,4 +1,4 @@
-package dev.latvian.apps.webutils.math;
+package dev.latvian.apps.webutils.data;
 
 public record Color4f(float r, float g, float b, float a) {
 	public static final Color4f TRANSPARENT = new Color4f(0F, 0F, 0F, 0F);
@@ -25,5 +25,38 @@ public record Color4f(float r, float g, float b, float a) {
 
 	public Color4f(float r, float g, float b) {
 		this(r, g, b, 1F);
+	}
+
+	public Color4i to4i() {
+		if (this == BLACK) {
+			return Color4i.BLACK;
+		} else if (this == WHITE) {
+			return Color4i.WHITE;
+		} else {
+			return new Color4i((int) (r * 255F), (int) (g * 255F), (int) (b * 255F), (int) (a * 255F));
+		}
+	}
+
+	public int argb() {
+		return (int) (a * 255F) << 24 | (int) (r * 255F) << 16 | (int) (g * 255F) << 8 | (int) (b * 255F);
+	}
+
+	public int rgb() {
+		return (int) (r * 255F) << 16 | (int) (g * 255F) << 8 | (int) (b * 255F);
+	}
+
+	@Override
+	public int hashCode() {
+		return argb();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return obj == this || obj instanceof Color4f c && argb() == c.argb();
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%08X", argb());
 	}
 }

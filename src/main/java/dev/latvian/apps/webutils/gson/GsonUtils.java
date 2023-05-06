@@ -41,6 +41,8 @@ public interface GsonUtils {
 			return JsonNull.INSTANCE;
 		} else if (o instanceof JsonElement json) {
 			return json;
+		} else if (o instanceof GsonSerializable serializable) {
+			return serializable.toJson();
 		} else if (o instanceof Map<?, ?> map) {
 			var json = new JsonObject();
 
@@ -130,5 +132,11 @@ public interface GsonUtils {
 		JsonArray array = new JsonArray();
 		array.add(element);
 		return array;
+	}
+
+	static JsonObject object(String key, JsonElement value) {
+		var obj = new JsonObject();
+		obj.add(key, value);
+		return obj;
 	}
 }

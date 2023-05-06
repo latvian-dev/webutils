@@ -1,8 +1,5 @@
 package dev.latvian.apps.webutils.data;
 
-/**
- * @author LatvianModder
- */
 public abstract class Either<L, R> {
 	public static <L, R> Either<L, R> left(L l) {
 		return new Left<>(l);

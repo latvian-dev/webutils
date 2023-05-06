@@ -25,7 +25,7 @@ public class MutableLong {
 		return String.valueOf(value);
 	}
 
-	public static long valueOf(@Nullable MutableLong v) {
-		return v == null ? 0L : v.value;
+	public static long valueOf(@Nullable MutableLong v, long def) {
+		return v == null ? def : v.value;
 	}
 }

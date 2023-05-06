@@ -31,14 +31,6 @@ public interface Ansi {
 			"white",
 	};
 
-	static String c256(int code) {
-		return "\u001B[38;5;" + code + "m";
-	}
-
-	static String b256(int code) {
-		return "\u001B[48;5;" + code + "m";
-	}
-
 	static AnsiComponent of() {
 		return new AnsiComponent("");
 	}
@@ -139,9 +131,10 @@ public interface Ansi {
 		return of(text).white();
 	}
 
-	static void log(Object message) {
+	static Date log(Object message) {
 		var c = of();
-		c.append(cyan(FormattingUtils.formatDate(new StringBuilder(), new Date()).toString()));
+		var now = new Date();
+		c.append(cyan(FormattingUtils.formatDate(new StringBuilder(), now).toString()));
 
 		var c1 = of(message);
 
@@ -167,5 +160,6 @@ public interface Ansi {
 		c.append(' ');
 		c.append(c1);
 		System.out.println(c);
+		return now;
 	}
 }
