@@ -1,8 +1,5 @@
-package dev.latvian.apps.webutils;
+package dev.latvian.apps.webutils.ansi;
 
-import dev.latvian.apps.webutils.ansi.Ansi;
-import dev.latvian.apps.webutils.ansi.AnsiCode;
-import dev.latvian.apps.webutils.ansi.AnsiComponent;
 import dev.latvian.apps.webutils.html.PairedTag;
 import dev.latvian.apps.webutils.html.Tag;
 import org.jetbrains.annotations.Nullable;

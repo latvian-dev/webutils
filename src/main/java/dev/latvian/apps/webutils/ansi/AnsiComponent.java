@@ -337,6 +337,10 @@ public class AnsiComponent implements AnsiAppendable {
 		return color(15);
 	}
 
+	public AnsiComponent error() {
+		return white().redBg();
+	}
+
 	public AnsiComponent debugColor(int index) {
 		return switch (index & 3) {
 			case 0 -> red();

@@ -1,19 +1,14 @@
-package dev.latvian.apps.webutils;
+package dev.latvian.apps.webutils.data;
 
 import java.util.Objects;
 import java.util.function.Function;
 
-public final class Pair<A, B> {
+/**
+ * @author LatvianModder
+ */
+public record Pair<A, B>(A a, B b) {
 	public static <A, B> Pair<A, B> of(A a, B b) {
 		return new Pair<>(a, b);
-	}
-
-	public final A a;
-	public final B b;
-
-	private Pair(A _a, B _b) {
-		a = _a;
-		b = _b;
 	}
 
 	@Override
@@ -29,7 +24,7 @@ public final class Pair<A, B> {
 			return false;
 		}
 
-		Pair<?, ?> pair = (Pair<?, ?>) o;
+		var pair = (Pair<?, ?>) o;
 		return Objects.equals(a, pair.a) && Objects.equals(b, pair.b);
 	}
 
@@ -45,11 +40,13 @@ public final class Pair<A, B> {
 		return of(a, bn.apply(b));
 	}
 
-	public A getA() {
+	@Override
+	public A a() {
 		return a;
 	}
 
-	public B getB() {
+	@Override
+	public B b() {
 		return b;
 	}
 }

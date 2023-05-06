@@ -1,5 +1,7 @@
 package dev.latvian.apps.webutils.ansi;
 
+import dev.latvian.apps.webutils.FormattingUtils;
+
 import java.util.Date;
 import java.util.regex.Pattern;
 
@@ -139,7 +141,7 @@ public interface Ansi {
 
 	static void log(Object message) {
 		var c = of();
-		c.append(cyan('[' + new Date().toLocaleString() + "]"));
+		c.append(cyan(FormattingUtils.formatDate(new StringBuilder(), new Date()).toString()));
 
 		var c1 = of(message);
 
@@ -151,7 +153,7 @@ public interface Ansi {
 				case '*' -> c1.orange();
 				case '~' -> c1.yellow();
 				case '-' -> c1.red();
-				case '!' -> c1.white().darkRedBg();
+				case '!' -> c1.error();
 				case '?' -> c1.lightGray();
 				case '`' -> c1.teal();
 				default -> {

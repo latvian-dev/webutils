@@ -1,4 +1,4 @@
-package dev.latvian.apps.webutils;
+package dev.latvian.apps.webutils.data;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
