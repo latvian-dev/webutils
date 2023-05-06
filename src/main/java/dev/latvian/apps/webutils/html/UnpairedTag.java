@@ -1,5 +1,6 @@
 package dev.latvian.apps.webutils.html;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Writer;
@@ -16,7 +17,8 @@ public class UnpairedTag extends Tag {
 	}
 
 	@Override
-	protected Tag attr(String key, Object value) {
+	@ApiStatus.Internal
+	public Tag attr(String key, Object value) {
 		if (key.isEmpty()) {
 			return this;
 		}

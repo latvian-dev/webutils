@@ -5,6 +5,7 @@ import dev.latvian.apps.webutils.net.FileResponse;
 import dev.latvian.apps.webutils.net.Response;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.StringWriter;
@@ -54,11 +55,13 @@ public abstract class Tag implements TagConvertible {
 		return this;
 	}
 
-	protected Tag attr(String key, Object value) {
+	@ApiStatus.Internal
+	public Tag attr(String key, Object value) {
 		throw new IllegalStateException("This tag type does not support attributes");
 	}
 
-	protected Tag attr(String key) {
+	@ApiStatus.Internal
+	public Tag attr(String key) {
 		return attr(key, "<NO_VALUE>");
 	}
 
@@ -156,13 +159,15 @@ public abstract class Tag implements TagConvertible {
 		return add(new RawTag(String.valueOf(string)));
 	}
 
-	protected UnpairedTag unpaired(String name) {
+	@ApiStatus.Internal
+	public UnpairedTag unpaired(String name) {
 		var tag = new UnpairedTag(name);
 		add(tag);
 		return tag;
 	}
 
-	protected PairedTag paired(String name) {
+	@ApiStatus.Internal
+	public PairedTag paired(String name) {
 		var tag = new PairedTag(name);
 		add(tag);
 		return tag;
@@ -408,6 +413,10 @@ public abstract class Tag implements TagConvertible {
 
 	public Tag option(String value) {
 		return paired("option").attr("value", value);
+	}
+
+	public Tag iframe(String name) {
+		return paired("iframe").attr("name", name);
 	}
 
 	// Form
