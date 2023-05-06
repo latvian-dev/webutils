@@ -1,10 +1,15 @@
 package dev.latvian.apps.webutils.html;
 
 import dev.latvian.apps.webutils.ansi.Ansi;
+import dev.latvian.apps.webutils.net.FileResponse;
+import dev.latvian.apps.webutils.net.Response;
+import io.javalin.http.Context;
+import io.javalin.http.HttpStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
@@ -105,6 +110,24 @@ public abstract class Tag implements TagConvertible {
 		}
 
 		return writer.toString();
+	}
+
+	public void result(Context ctx) {
+		result(ctx, HttpStatus.OK);
+	}
+
+	public void result(Context ctx, HttpStatus status) {
+		ctx.status(status);
+		ctx.contentType("text/html; charset=utf-8");
+		ctx.result(getRoot().toString().getBytes(StandardCharsets.UTF_8));
+	}
+
+	public Response asResponse() {
+		return asResponse(HttpStatus.OK);
+	}
+
+	public Response asResponse(HttpStatus status) {
+		return FileResponse.of(status, "text/html; charset=utf-8", getRoot().toString().getBytes(StandardCharsets.UTF_8));
 	}
 
 	public Tag string(Object string) {
