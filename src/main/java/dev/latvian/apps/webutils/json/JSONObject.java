@@ -34,7 +34,8 @@ public class JSONObject extends LinkedHashMap<String, Object> {
 	}
 
 	public JSONArray array(String key) {
-		return (JSONArray) get(key);
+		var o = get(key);
+		return o instanceof JSONArray a ? a : JSONArray.of(o);
 	}
 
 	public String string(String key) {
@@ -47,5 +48,10 @@ public class JSONObject extends LinkedHashMap<String, Object> {
 
 	public boolean bool(String key) {
 		return (boolean) get(key);
+	}
+
+	@Override
+	public String toString() {
+		return JSON.DEFAULT.write(this);
 	}
 }

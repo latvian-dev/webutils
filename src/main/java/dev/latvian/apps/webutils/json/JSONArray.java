@@ -44,7 +44,8 @@ public class JSONArray extends ArrayList<Object> {
 	}
 
 	public JSONArray array(int index) {
-		return (JSONArray) get(index);
+		var o = get(index);
+		return o instanceof JSONArray a ? a : JSONArray.of(o);
 	}
 
 	public String string(int index) {
@@ -57,5 +58,10 @@ public class JSONArray extends ArrayList<Object> {
 
 	public boolean bool(int index) {
 		return (boolean) get(index);
+	}
+
+	@Override
+	public String toString() {
+		return JSON.DEFAULT.write(this);
 	}
 }

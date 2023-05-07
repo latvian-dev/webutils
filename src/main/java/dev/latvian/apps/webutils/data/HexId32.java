@@ -1,10 +1,7 @@
 package dev.latvian.apps.webutils.data;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
 import dev.latvian.apps.webutils.html.Tag;
 import dev.latvian.apps.webutils.html.TagConvertible;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiConsumer;
 import java.util.function.IntSupplier;
@@ -36,10 +33,6 @@ public class HexId32 implements TagConvertible, IntSupplier {
 
 	public static HexId32 of(String id) {
 		return id == null || id.isBlank() || id.charAt(0) == '-' ? NONE : of(Integer.parseUnsignedInt(id, 16));
-	}
-
-	public static HexId32 of(@Nullable JsonElement json) {
-		return json instanceof JsonPrimitive primitive ? primitive.isString() ? of(json.getAsString()) : of(json.getAsInt()) : NONE;
 	}
 
 	private final int id;
