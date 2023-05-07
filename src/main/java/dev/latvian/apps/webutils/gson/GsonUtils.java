@@ -17,6 +17,8 @@ public interface GsonUtils {
 	GsonBuilder GSON_BUILDER = new GsonBuilder()
 			.disableHtmlEscaping()
 			.setLenient()
+			.registerTypeAdapterFactory(GsonFactory.HEX32)
+			.registerTypeAdapterFactory(GsonFactory.HEX64)
 			/*
 			.registerTypeAdapter(Snowflake.class, new TypeAdapter<Snowflake>() {
 				@Override

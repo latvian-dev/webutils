@@ -21,6 +21,10 @@ public interface JsonResponse {
 		return FileResponse.of(status, "application/json; charset=utf-8", GsonUtils.GSON.toJson(json).getBytes(StandardCharsets.UTF_8));
 	}
 
+	static Response of(JsonElement json) {
+		return of(HttpStatus.OK, json);
+	}
+
 	static Response object(final Consumer<JsonObject> consumer) {
 		var json = new JsonObject();
 		consumer.accept(json);
