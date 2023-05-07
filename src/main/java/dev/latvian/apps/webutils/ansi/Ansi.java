@@ -131,7 +131,7 @@ public interface Ansi {
 		return of(text).white();
 	}
 
-	static Date log(Object message) {
+	static Date log(Object message, boolean newline) {
 		var c = of();
 		var now = new Date();
 		c.append(cyan(FormattingUtils.formatDate(new StringBuilder(), now).toString()));
@@ -159,7 +159,17 @@ public interface Ansi {
 
 		c.append(' ');
 		c.append(c1);
-		System.out.println(c);
+
+		if (newline) {
+			System.out.println(c);
+		} else {
+			System.out.print(c);
+		}
+
 		return now;
+	}
+
+	static Date log(Object message) {
+		return log(message, true);
 	}
 }

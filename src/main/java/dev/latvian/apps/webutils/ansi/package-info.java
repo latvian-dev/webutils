@@ -1,2 +1,2 @@
 @dev.latvian.apps.webutils.NonnullByDefault
-package dev.latvian.apps.webutils.html;
+package dev.latvian.apps.webutils.ansi;

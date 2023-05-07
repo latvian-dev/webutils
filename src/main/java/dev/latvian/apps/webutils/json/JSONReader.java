@@ -1,16 +1,11 @@
 package dev.latvian.apps.webutils.json;
 
-import dev.latvian.apps.webutils.MiscUtils;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 public interface JSONReader {
-	JSON json();
+	default JSON json() {
+		return JSON.DEFAULT;
+	}
 
 	char read();
 
@@ -23,48 +18,8 @@ public interface JSONReader {
 	}
 
 	@SuppressWarnings("unchecked")
-	default <T> T read(Class<T> type) {
-		if (type == Object.class) {
-			return (T) readValue();
-		} else if (type == String.class) {
-			return (T) readString();
-		} else if (type == Character.class || type == Character.TYPE) {
-			return (T) Character.valueOf(readString().charAt(0));
-		} else if (type == Number.class) {
-			return (T) readNumber();
-		} else if (type == Byte.class || type == Byte.TYPE) {
-			return (T) Byte.valueOf(readNumber().byteValue());
-		} else if (type == Short.class || type == Short.TYPE) {
-			return (T) Short.valueOf(readNumber().shortValue());
-		} else if (type == Integer.class || type == Integer.TYPE) {
-			return (T) Integer.valueOf(readNumber().intValue());
-		} else if (type == Long.class || type == Long.TYPE) {
-			return (T) Long.valueOf(readNumber().longValue());
-		} else if (type == Float.class || type == Float.TYPE) {
-			return (T) Float.valueOf(readNumber().floatValue());
-		} else if (type == Double.class || type == Double.TYPE) {
-			return (T) Double.valueOf(readNumber().doubleValue());
-		} else if (type == Map.class || type == JSONObject.class) {
-			return (T) readObject();
-		} else if (type == List.class || type == Collection.class || type == Iterable.class || type == JSONArray.class) {
-			return (T) readArray();
-		} else if (type == Set.class) {
-			return (T) new HashSet<>(readArray());
-		} else if (type.isEnum()) {
-			var str = readString();
-
-			for (var e : type.getEnumConstants()) {
-				if (e.toString().equalsIgnoreCase(str)) {
-					return e;
-				}
-			}
-
-			throw new IllegalArgumentException("Unknown enum constant: " + str);
-		}
-		// Other
-		else {
-			return MiscUtils.cast(json().getAdapter(type).read(this));
-		}
+	default <T> T adapt(Class<T> type) {
+		return json().adapt(readValue(), type);
 	}
 
 	@Nullable

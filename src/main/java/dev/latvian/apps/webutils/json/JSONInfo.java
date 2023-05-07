@@ -1,4 +1,4 @@
-package dev.latvian.apps.webutils;
+package dev.latvian.apps.webutils.json;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -7,7 +7,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Documented
-@Target({ElementType.PARAMETER, ElementType.METHOD, ElementType.PACKAGE})
-@Retention(RetentionPolicy.CLASS)
-public @interface NonnullByDefault {
+@Target({ElementType.FIELD, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface JSONInfo {
+	String value() default "";
 }

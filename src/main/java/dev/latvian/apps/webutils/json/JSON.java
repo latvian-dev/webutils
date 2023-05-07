@@ -16,9 +16,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -28,20 +32,20 @@ public class JSON {
 
 	static {
 		DEFAULT.registerStringAdapter(UUID.class, UUID::fromString);
-		DEFAULT.registerAdapter(Date.class, reader -> Date.from(Instant.parse(reader.readString())), date -> date.toInstant().toString());
+		DEFAULT.registerAdapter(Date.class, value -> Date.from(Instant.parse(String.valueOf(value))), date -> date.toInstant().toString());
 		DEFAULT.registerStringAdapter(Instant.class, Instant::parse);
-		DEFAULT.registerAdapter(URL.class, reader -> {
+		DEFAULT.registerAdapter(URL.class, value -> {
 			try {
-				return new URL(reader.readString());
+				return new URL(String.valueOf(value));
 			} catch (MalformedURLException e) {
 				throw new RuntimeException(e);
 			}
 		}, URL::toString);
 		DEFAULT.registerStringAdapter(URI.class, URI::create);
 		DEFAULT.registerStringAdapter(Path.class, Path::of);
-		DEFAULT.registerAdapter(Class.class, reader -> {
+		DEFAULT.registerAdapter(Class.class, value -> {
 			try {
-				return Class.forName(reader.readString());
+				return Class.forName(String.valueOf(value));
 			} catch (ClassNotFoundException e) {
 				throw new RuntimeException(e);
 			}
@@ -87,11 +91,11 @@ public class JSON {
 		adapters.put(type, adapter);
 	}
 
-	public <T> void registerAdapter(Class<T> type, final Function<JSONReader, T> read, final Function<T, Object> write) {
+	public <T> void registerAdapter(Class<T> type, final Function<Object, T> adapt, final Function<T, Object> write) {
 		registerAdapter(type, new JSONAdapter<>() {
 			@Override
-			public T read(JSONReader reader) {
-				return read.apply(reader);
+			public T adapt(Object value) {
+				return adapt.apply(value);
 			}
 
 			@Override
@@ -101,11 +105,11 @@ public class JSON {
 		});
 	}
 
-	public <T> void registerStringAdapter(Class<T> type, final Function<String, T> read) {
+	public <T> void registerStringAdapter(Class<T> type, final Function<String, T> adapt) {
 		registerAdapter(type, new JSONAdapter<>() {
 			@Override
-			public T read(JSONReader reader) {
-				return read.apply(reader.readString());
+			public T adapt(Object value) {
+				return adapt.apply(String.valueOf(value));
 			}
 
 			@Override
@@ -133,7 +137,7 @@ public class JSON {
 		}
 
 		if (adapter == null) {
-			adapter = new ReflectionJSONAdapter(type);
+			adapter = new ReflectionJSONAdapter(this, type);
 			adapters.put(type, adapter);
 		}
 
@@ -258,5 +262,50 @@ public class JSON {
 
 	public JSON child() {
 		return new JSON(this);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T adapt(Object jsonValue, Class<T> type) {
+		if (type == Object.class) {
+			return (T) jsonValue;
+		} else if (type == String.class) {
+			return (T) String.valueOf(jsonValue);
+		} else if (type == Character.class || type == Character.TYPE) {
+			return (T) Character.valueOf(String.valueOf(jsonValue).charAt(0));
+		} else if (type == Number.class) {
+			return (T) jsonValue;
+		} else if (type == Byte.class || type == Byte.TYPE) {
+			return (T) Byte.valueOf(((Number) jsonValue).byteValue());
+		} else if (type == Short.class || type == Short.TYPE) {
+			return (T) Short.valueOf(((Number) jsonValue).shortValue());
+		} else if (type == Integer.class || type == Integer.TYPE) {
+			return (T) Integer.valueOf(((Number) jsonValue).intValue());
+		} else if (type == Long.class || type == Long.TYPE) {
+			return (T) Long.valueOf(((Number) jsonValue).longValue());
+		} else if (type == Float.class || type == Float.TYPE) {
+			return (T) Float.valueOf(((Number) jsonValue).floatValue());
+		} else if (type == Double.class || type == Double.TYPE) {
+			return (T) Double.valueOf(((Number) jsonValue).doubleValue());
+		} else if (type == Map.class || type == JSONObject.class) {
+			return (T) jsonValue;
+		} else if (type == List.class || type == Collection.class || type == Iterable.class || type == JSONArray.class) {
+			return (T) jsonValue;
+		} else if (type == Set.class) {
+			return (T) new HashSet<>((Collection<?>) jsonValue);
+		} else if (type.isEnum()) {
+			var str = String.valueOf(jsonValue);
+
+			for (var e : type.getEnumConstants()) {
+				if (e.toString().equalsIgnoreCase(str)) {
+					return e;
+				}
+			}
+
+			throw new IllegalArgumentException("Unknown enum constant: " + str);
+		}
+		// Other
+		else {
+			return MiscUtils.cast(getAdapter(type).adapt(jsonValue));
+		}
 	}
 }
