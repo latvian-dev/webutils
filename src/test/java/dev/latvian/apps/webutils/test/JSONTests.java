@@ -19,7 +19,7 @@ public class JSONTests {
 	@Test
 	public void deserialize() {
 		var map = JSON.DEFAULT.read("""
-				{"a":10,"b":"Hi","c":[1,2,3]}""").readObject();
+				{ "a"   : 10    , "b":"Hi","c":[  1,  2,3  ] }""").readObject();
 
 		Assertions.assertEquals(map.array("c").number(2).intValue(), 3);
 	}

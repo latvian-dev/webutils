@@ -17,6 +17,17 @@ public interface JSONReader {
 		}
 	}
 
+	default boolean peekWhitespace() {
+		var c = peek();
+		return c != '\0' && Character.isWhitespace(c);
+	}
+
+	default void skipWhitespace() {
+		while (peekWhitespace()) {
+			read();
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	default <T> T adapt(Class<T> type) {
 		return json().adapt(readValue(), type);
@@ -120,15 +131,20 @@ public interface JSONReader {
 
 	default JSONObject readObject() {
 		expect('{');
+		skipWhitespace();
+
 		var obj = new JSONObject();
 
 		while (peek() != '}') {
 			String key = readString();
+			skipWhitespace();
 			expect(':');
+			skipWhitespace();
 			var v = readValue();
+
 			obj.put(key, v == null ? JSON.NULL : v);
 
-			while (peek() == ',') {
+			while (peek() == ',' || peekWhitespace()) {
 				read();
 			}
 		}
@@ -139,13 +155,17 @@ public interface JSONReader {
 
 	default JSONArray readArray() {
 		expect('[');
+		skipWhitespace();
+
 		var arr = new JSONArray();
 
 		while (peek() != ']') {
 			var v = readValue();
+			skipWhitespace();
+
 			arr.add(v == null ? JSON.NULL : v);
 
-			while (peek() == ',') {
+			while (peek() == ',' || peekWhitespace()) {
 				read();
 			}
 		}

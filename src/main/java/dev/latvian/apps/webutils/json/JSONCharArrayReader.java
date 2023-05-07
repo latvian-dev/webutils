@@ -9,6 +9,7 @@ public class JSONCharArrayReader implements JSONReader {
 		this.json = json;
 		this.chars = chars;
 		this.pos = 0;
+		skipWhitespace();
 	}
 
 	@Override
@@ -23,13 +24,6 @@ public class JSONCharArrayReader implements JSONReader {
 		}
 
 		return chars[pos++];
-	}
-
-	@Override
-	public void expect(char c) {
-		if (read() != c) {
-			throw new IllegalStateException("Expected " + c);
-		}
 	}
 
 	@Override
