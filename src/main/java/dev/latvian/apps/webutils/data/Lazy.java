@@ -4,8 +4,9 @@ import dev.latvian.apps.webutils.ansi.Ansi;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
-public class Lazy<T> {
+public class Lazy<T> implements Supplier<T> {
 	@FunctionalInterface
 	public interface LazySupplier<T> {
 		T get() throws Exception;
@@ -46,6 +47,7 @@ public class Lazy<T> {
 		inited = false;
 	}
 
+	@Override
 	@Nullable
 	public T get() {
 		if (!inited) {

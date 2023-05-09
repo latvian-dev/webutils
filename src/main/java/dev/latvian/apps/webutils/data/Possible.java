@@ -3,9 +3,10 @@ package dev.latvian.apps.webutils.data;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 @SuppressWarnings("unchecked")
-public record Possible<T>(@Nullable T value) {
+public record Possible<T>(@Nullable T value) implements Supplier<T> {
 	public static final Possible<?> ABSENT = new Possible<>(null);
 	public static final Possible<?> NULL = new Possible<>(null);
 
@@ -37,6 +38,7 @@ public record Possible<T>(@Nullable T value) {
 		return isAbsent() ? absent() : Possible.of(function.apply(value));
 	}
 
+	@Override
 	@Nullable
 	public T get() {
 		return isAbsent() ? null : get();
