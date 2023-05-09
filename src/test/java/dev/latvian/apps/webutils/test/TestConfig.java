@@ -8,7 +8,7 @@ public class TestConfig {
 	public DiscordConfig discord = new DiscordConfig();
 
 	public static class WebConfig {
-		public int port = 123456;
+		public int port = 12345;
 		public String title = "Test";
 	}
 
