@@ -338,7 +338,7 @@ public class AnsiComponent implements AnsiAppendable {
 	}
 
 	public AnsiComponent error() {
-		return white().redBg();
+		return white().darkRedBg();
 	}
 
 	public AnsiComponent debugColor(int index) {
