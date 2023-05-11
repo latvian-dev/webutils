@@ -119,16 +119,17 @@ public class JSON {
 		});
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T> JSONAdapter<T> getAdapter(Class<T> type) {
-		var adapter = adapters.get(type);
+		var a = adapters.get(type);
 
-		if (adapter == null) {
+		if (a == null) {
 			var p = parent;
 
 			while (p != null) {
-				adapter = p.adapters.get(type);
+				a = p.adapters.get(type);
 
-				if (adapter != null) {
+				if (a != null) {
 					break;
 				}
 
@@ -136,12 +137,17 @@ public class JSON {
 			}
 		}
 
-		if (adapter == null) {
-			adapter = new ReflectionJSONAdapter(this, type);
-			adapters.put(type, adapter);
+		if (a == null) {
+			if (type.isArray()) {
+				a = new ArrayJSONAdapter(this, type.getComponentType());
+			} else {
+				a = new ReflectionJSONAdapter(this, type);
+			}
+
+			adapters.put(type, a);
 		}
 
-		return (JSONAdapter<T>) adapter;
+		return (JSONAdapter<T>) a;
 	}
 
 	public JSONReader read(String string) {
@@ -265,37 +271,39 @@ public class JSON {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> T adapt(Object jsonValue, Class<T> type) {
-		if (type == Object.class) {
-			return (T) jsonValue;
-		} else if (type == String.class) {
-			return (T) String.valueOf(jsonValue);
-		} else if (type == Character.class || type == Character.TYPE) {
-			return (T) Character.valueOf(String.valueOf(jsonValue).charAt(0));
-		} else if (type == Number.class) {
-			return (T) jsonValue;
-		} else if (type == Byte.class || type == Byte.TYPE) {
-			return (T) Byte.valueOf(((Number) jsonValue).byteValue());
-		} else if (type == Short.class || type == Short.TYPE) {
-			return (T) Short.valueOf(((Number) jsonValue).shortValue());
-		} else if (type == Integer.class || type == Integer.TYPE) {
-			return (T) Integer.valueOf(((Number) jsonValue).intValue());
-		} else if (type == Long.class || type == Long.TYPE) {
-			return (T) Long.valueOf(((Number) jsonValue).longValue());
-		} else if (type == Float.class || type == Float.TYPE) {
-			return (T) Float.valueOf(((Number) jsonValue).floatValue());
-		} else if (type == Double.class || type == Double.TYPE) {
-			return (T) Double.valueOf(((Number) jsonValue).doubleValue());
-		} else if (type == Map.class || type == JSONObject.class) {
-			return (T) jsonValue;
-		} else if (type == List.class || type == Collection.class || type == Iterable.class || type == JSONArray.class) {
-			return (T) jsonValue;
-		} else if (type == Set.class) {
-			return (T) new HashSet<>((Collection<?>) jsonValue);
-		} else if (type.isEnum()) {
-			var str = String.valueOf(jsonValue);
+	public <T> T adapt(Object value, Class<T> t) {
+		if (value == null) {
+			return null;
+		} else if (t == Object.class || t.isInstance(value)) {
+			return (T) value;
+		} else if (t == String.class) {
+			return (T) String.valueOf(value);
+		} else if (t == Character.class || t == Character.TYPE) {
+			return (T) Character.valueOf(String.valueOf(value).charAt(0));
+		} else if (t == Number.class) {
+			return (T) value;
+		} else if (t == Byte.class || t == Byte.TYPE) {
+			return (T) Byte.valueOf(((Number) value).byteValue());
+		} else if (t == Short.class || t == Short.TYPE) {
+			return (T) Short.valueOf(((Number) value).shortValue());
+		} else if (t == Integer.class || t == Integer.TYPE) {
+			return (T) Integer.valueOf(((Number) value).intValue());
+		} else if (t == Long.class || t == Long.TYPE) {
+			return (T) Long.valueOf(((Number) value).longValue());
+		} else if (t == Float.class || t == Float.TYPE) {
+			return (T) Float.valueOf(((Number) value).floatValue());
+		} else if (t == Double.class || t == Double.TYPE) {
+			return (T) Double.valueOf(((Number) value).doubleValue());
+		} else if (t == Map.class || t == JSONObject.class) {
+			return (T) value;
+		} else if (t == List.class || t == Collection.class || t == Iterable.class || t == JSONArray.class) {
+			return (T) value;
+		} else if (t == Set.class) {
+			return (T) new HashSet<>((Collection<?>) value);
+		} else if (t.isEnum()) {
+			var str = String.valueOf(value);
 
-			for (var e : type.getEnumConstants()) {
+			for (var e : t.getEnumConstants()) {
 				if (e.toString().equalsIgnoreCase(str)) {
 					return e;
 				}
@@ -305,7 +313,7 @@ public class JSON {
 		}
 		// Other
 		else {
-			return MiscUtils.cast(getAdapter(type).adapt(jsonValue));
+			return MiscUtils.cast(getAdapter(t).adapt(value));
 		}
 	}
 }

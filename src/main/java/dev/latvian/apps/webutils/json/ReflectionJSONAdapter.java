@@ -38,39 +38,36 @@ public class ReflectionJSONAdapter implements JSONAdapter<Object> {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public Object adapt(Object jsonValue) {
-		if (!(jsonValue instanceof Map<?, ?>)) {
-			throw new IllegalArgumentException("Expected JSON object for type '" + type.getName() + "'");
-		}
-
-		if (constructor == null) {
-			try {
-				constructor = type.getDeclaredConstructor();
-				constructor.setAccessible(true);
-			} catch (NoSuchMethodException e) {
-				throw new RuntimeException("No default constructor for type '" + type.getName() + "'", e);
-			}
-		}
-
-		var object = (Map<String, ?>) jsonValue;
-
-		try {
-			var o = constructor.newInstance();
-
-			for (var entry : object.entrySet()) {
-				if (entry.getValue() != null && entry.getValue() != JSON.NULL) {
-					var f = fields().get(entry.getKey());
-
-					if (f != null) {
-						f.set(o, json.adapt(entry.getValue(), f.getType()));
-					}
+		if (jsonValue instanceof Map<?, ?> object) {
+			if (constructor == null) {
+				try {
+					constructor = type.getDeclaredConstructor();
+					constructor.setAccessible(true);
+				} catch (NoSuchMethodException e) {
+					throw new RuntimeException("No default constructor for type '" + type.getName() + "'", e);
 				}
 			}
 
-			return o;
-		} catch (Exception e) {
-			throw new RuntimeException("Error reading '" + type.getName() + "' JSON", e);
+			try {
+				var o = constructor.newInstance();
+
+				for (var entry : object.entrySet()) {
+					if (entry.getValue() != null && entry.getValue() != JSON.NULL) {
+						var f = fields().get(String.valueOf(entry.getKey()));
+
+						if (f != null) {
+							f.set(o, json.adapt(entry.getValue(), f.getType()));
+						}
+					}
+				}
+
+				return o;
+			} catch (Exception e) {
+				throw new RuntimeException("Error reading '" + type.getName() + "' JSON", e);
+			}
+		} else {
+			throw new IllegalArgumentException("Expected JSON object for type '" + type.getName() + "'");
 		}
 	}
 

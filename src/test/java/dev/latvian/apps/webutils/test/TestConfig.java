@@ -5,7 +5,7 @@ import java.net.URI;
 public class TestConfig {
 	public URI database = null;
 	public WebConfig web = new WebConfig();
-	public DiscordConfig discord = new DiscordConfig();
+	public DiscordConfig[] discord = new DiscordConfig[0];
 
 	public static class WebConfig {
 		public int port = 12345;

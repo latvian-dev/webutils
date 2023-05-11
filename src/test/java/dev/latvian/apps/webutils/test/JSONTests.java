@@ -27,10 +27,10 @@ public class JSONTests {
 	@Test
 	public void adapt() {
 		var config = JSON.DEFAULT.read("""
-				{"database":"https://lat:test@fakedb.com:1234/","discord":{"clientId":"7"}}""").adapt(TestConfig.class);
+				{"database":"https://lat:test@fakedb.com:1234/","discord":[{"clientId":"7"}]}""").adapt(TestConfig.class);
 
 		Assertions.assertEquals(config.database.toString(), "https://lat:test@fakedb.com:1234/");
-		Assertions.assertEquals(config.discord.clientId, "7");
-		Assertions.assertEquals(config.discord.clientSecret, "shh");
+		Assertions.assertEquals(config.discord[0].clientId, "7");
+		Assertions.assertEquals(config.discord[0].clientSecret, "shh");
 	}
 }
