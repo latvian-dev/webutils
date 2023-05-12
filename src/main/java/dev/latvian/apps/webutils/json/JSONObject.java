@@ -11,6 +11,14 @@ public class JSONObject extends LinkedHashMap<String, Object> {
 		return new JSONObject(1).append(key, value);
 	}
 
+	public static JSONObject of(String key1, Object value1, String key2, Object value2) {
+		return new JSONObject(2).append(key1, value1).append(key2, value2);
+	}
+
+	public static JSONObject of(String key1, Object value1, String key2, Object value2, String key3, Object value3) {
+		return new JSONObject(3).append(key1, value1).append(key2, value2).append(key3, value3);
+	}
+
 	public JSONObject() {
 	}
 

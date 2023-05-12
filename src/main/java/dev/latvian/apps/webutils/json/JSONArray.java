@@ -1,6 +1,7 @@
 package dev.latvian.apps.webutils.json;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class JSONArray extends ArrayList<Object> {
 	public static JSONArray of() {
@@ -11,10 +12,20 @@ public class JSONArray extends ArrayList<Object> {
 		return new JSONArray(1).append(value);
 	}
 
-	public static JSONArray ofAll(Object... values) {
+	public static JSONArray ofArray(Object... values) {
 		var a = new JSONArray(values.length);
 
 		for (var v : values) {
+			a.append(v);
+		}
+
+		return a;
+	}
+
+	public static JSONArray ofAll(Iterable<Object> iterable) {
+		var a = new JSONArray(iterable instanceof Collection<Object> c ? c.size() : 4);
+
+		for (var v : iterable) {
 			a.append(v);
 		}
 
