@@ -42,5 +42,5 @@ public interface Response {
 		return new ResponseWithHeader(this, key, value);
 	}
 
-	void result(Context ctx) throws Exception;
+	void result(Context ctx);
 }

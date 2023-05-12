@@ -10,7 +10,7 @@ record RedirectResponse(HttpStatus status, String location) implements Response 
 	}
 
 	@Override
-	public void result(Context ctx) throws Exception {
+	public void result(Context ctx) {
 		ctx.redirect(location, status);
 	}
 }

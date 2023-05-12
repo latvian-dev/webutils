@@ -10,7 +10,7 @@ record ResponseWithHeader(Response original, String key, String value) implement
 	}
 
 	@Override
-	public void result(Context ctx) throws Exception {
+	public void result(Context ctx) {
 		original.result(ctx);
 		ctx.header(key, value);
 	}

@@ -11,7 +11,7 @@ record ResponseWithCookie(Response original, Cookie cookie) implements Response 
 	}
 
 	@Override
-	public void result(Context ctx) throws Exception {
+	public void result(Context ctx) {
 		original.result(ctx);
 		ctx.cookie(cookie);
 	}
