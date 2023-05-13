@@ -452,4 +452,14 @@ public abstract class Tag implements TagConvertible {
 	public Tag textarea(String name, int rows, int cols) {
 		return paired("textarea").attr("id", getPrefix() + name).attr("name", name).attr("rows", rows).attr("cols", cols);
 	}
+
+	public Tag checkbox(String type, String name, boolean checked) {
+		var t = input("checkbox", name);
+
+		if (checked) {
+			t.attr("checked");
+		}
+
+		return t;
+	}
 }
