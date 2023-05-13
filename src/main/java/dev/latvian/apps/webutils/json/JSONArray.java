@@ -1,6 +1,8 @@
 package dev.latvian.apps.webutils.json;
 
 import dev.latvian.apps.webutils.MiscUtils;
+import dev.latvian.apps.webutils.data.HexId32;
+import dev.latvian.apps.webutils.data.HexId64;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,6 +64,14 @@ public class JSONArray extends ArrayList<Object> {
 		return MiscUtils.cast(this);
 	}
 
+	public List<HexId32> ofHex32s() {
+		return MiscUtils.cast(this);
+	}
+
+	public List<HexId64> ofHex64s() {
+		return MiscUtils.cast(this);
+	}
+
 	@Override
 	public Object get(int index) {
 		var o = super.get(index);
@@ -95,11 +105,12 @@ public class JSONArray extends ArrayList<Object> {
 	}
 
 	public String asString(int key) {
-		return String.valueOf(get(key));
+		var o = get(key);
+		return o == null ? "" : String.valueOf(o);
 	}
 
 	public Number asNumber(int key) {
-		return (Number) get(key);
+		return asNumber(key, 0);
 	}
 
 	public Number asNumber(int key, Number def) {
@@ -120,32 +131,50 @@ public class JSONArray extends ArrayList<Object> {
 		}
 	}
 
-	public int asInt(int key) {
-		return asInt(key, 0);
-	}
-
 	public int asInt(int key, int def) {
 		return asNumber(key, def).intValue();
 	}
 
-	public long asLong(int key) {
-		return asLong(key, 0L);
+	public int asInt(int key) {
+		return asInt(key, 0);
 	}
 
 	public long asLong(int key, long def) {
 		return asNumber(key, def).longValue();
 	}
 
-	public double asDouble(int key) {
-		return asDouble(key, 0D);
+	public long asLong(int key) {
+		return asLong(key, 0L);
 	}
 
 	public double asDouble(int key, double def) {
 		return asNumber(key, def).doubleValue();
 	}
 
+	public double asDouble(int key) {
+		return asDouble(key, 0D);
+	}
+
 	public boolean asBoolean(int key) {
 		return (boolean) get(key);
+	}
+
+	public HexId32 asHex32(int key) {
+		return asHex32(key, HexId32.NONE);
+	}
+
+	public HexId32 asHex32(int key, HexId32 def) {
+		var s = asString(key);
+		return s.isEmpty() ? def : HexId32.of(s);
+	}
+
+	public HexId64 asHex64(int key) {
+		return asHex64(key, HexId64.NONE);
+	}
+
+	public HexId64 asHex64(int key, HexId64 def) {
+		var s = asString(key);
+		return s.isEmpty() ? def : HexId64.of(s);
 	}
 
 	@Override
