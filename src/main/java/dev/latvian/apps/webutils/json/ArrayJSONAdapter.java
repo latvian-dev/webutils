@@ -56,8 +56,8 @@ public class ArrayJSONAdapter implements JSONAdapter<Object> {
 
 	@Override
 	public void write(JSON json, Writer writer, Object value, int depth, boolean pretty) throws IOException {
-		var arr = new JSONArray();
 		var len = Array.getLength(value);
+		var arr = JSONArray.of(len);
 
 		for (var i = 0; i < len; i++) {
 			arr.add(Array.get(value, i));

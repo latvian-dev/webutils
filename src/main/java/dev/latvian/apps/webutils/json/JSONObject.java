@@ -1,10 +1,21 @@
 package dev.latvian.apps.webutils.json;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class JSONObject extends LinkedHashMap<String, Object> {
 	public static JSONObject of() {
-		return new JSONObject();
+		return new JSONObject(8);
+	}
+
+	public static JSONObject of(int initialCapacity) {
+		return new JSONObject(initialCapacity);
+	}
+
+	public static JSONObject of(Map<String, ?> map) {
+		var o = new JSONObject(map.size());
+		o.putAll(map);
+		return o;
 	}
 
 	public static JSONObject of(String key, Object value) {
@@ -19,11 +30,11 @@ public class JSONObject extends LinkedHashMap<String, Object> {
 		return new JSONObject(3).append(key1, value1).append(key2, value2).append(key3, value3);
 	}
 
-	public JSONObject() {
+	private JSONObject(int initialCapacity) {
+		super(initialCapacity);
 	}
 
-	public JSONObject(int initialCapacity) {
-		super(initialCapacity);
+	JSONObject(String key) {
 	}
 
 	@Override
@@ -37,25 +48,83 @@ public class JSONObject extends LinkedHashMap<String, Object> {
 		return this;
 	}
 
-	public JSONObject object(String key) {
+	public JSONObject asObject(String key) {
 		return (JSONObject) get(key);
 	}
 
-	public JSONArray array(String key) {
+	public JSONObject makeObject(String key) {
+		return (JSONObject) computeIfAbsent(key, JSONObject::new);
+	}
+
+	public JSONArray asArray(String key) {
 		var o = get(key);
 		return o instanceof JSONArray a ? a : JSONArray.of(o);
 	}
 
-	public String string(String key) {
+	public JSONArray makeArray(String key) {
+		return (JSONArray) computeIfAbsent(key, JSONArray::new);
+	}
+
+	public String asString(String key) {
 		return String.valueOf(get(key));
 	}
 
-	public Number number(String key) {
+	public String asString(String key, String def) {
+		return String.valueOf(getOrDefault(key, def));
+	}
+
+	public Number asNumber(String key) {
 		return (Number) get(key);
 	}
 
-	public boolean bool(String key) {
+	public Number asNumber(String key, Number def) {
+		var o = get(key);
+
+		if (o == null) {
+			return def;
+		} else if (o instanceof Number n) {
+			return n;
+		} else if (o instanceof CharSequence) {
+			try {
+				return Double.parseDouble(o.toString());
+			} catch (NumberFormatException e) {
+				return def;
+			}
+		} else {
+			return def;
+		}
+	}
+
+	public int asInt(String key) {
+		return asInt(key, 0);
+	}
+
+	public int asInt(String key, int def) {
+		return asNumber(key, def).intValue();
+	}
+
+	public long asLong(String key) {
+		return asLong(key, 0L);
+	}
+
+	public long asLong(String key, long def) {
+		return asNumber(key, def).longValue();
+	}
+
+	public double asDouble(String key) {
+		return asDouble(key, 0D);
+	}
+
+	public double asDouble(String key, double def) {
+		return asNumber(key, def).doubleValue();
+	}
+
+	public boolean asBoolean(String key) {
 		return (boolean) get(key);
+	}
+
+	public boolean asBoolean(String key, boolean def) {
+		return (boolean) getOrDefault(key, def);
 	}
 
 	@Override

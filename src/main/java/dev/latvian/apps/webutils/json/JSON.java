@@ -248,7 +248,7 @@ public class JSON {
 		} else if (value instanceof Enum<?> e) {
 			write(writer, e.name().toLowerCase(), depth, pretty);
 		} else if (value instanceof Record) {
-			var obj = new JSONObject();
+			var obj = JSONObject.of();
 
 			for (var field : value.getClass().getRecordComponents()) {
 				try {

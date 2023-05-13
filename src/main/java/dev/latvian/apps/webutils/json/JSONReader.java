@@ -133,7 +133,7 @@ public interface JSONReader {
 		expect('{');
 		skipWhitespace();
 
-		var obj = new JSONObject();
+		var obj = JSONObject.of();
 
 		while (peek() != '}') {
 			String key = readString();
@@ -157,7 +157,7 @@ public interface JSONReader {
 		expect('[');
 		skipWhitespace();
 
-		var arr = new JSONArray();
+		var arr = JSONArray.of();
 
 		while (peek() != ']') {
 			var v = readValue();

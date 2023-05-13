@@ -21,7 +21,7 @@ public class JSONTests {
 		var map = JSON.DEFAULT.read("""
 				{ "a"   : 10    , "b":"Hi","c":[  1,  2,3  ] }""").readObject();
 
-		Assertions.assertEquals(map.array("c").number(2).intValue(), 3);
+		Assertions.assertEquals(map.asArray("c").asInt(2), 3);
 	}
 
 	@Test
