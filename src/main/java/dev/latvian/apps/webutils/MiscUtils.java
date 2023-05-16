@@ -6,6 +6,9 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public interface MiscUtils {
@@ -34,5 +37,27 @@ public interface MiscUtils {
 		List<T> list = new ArrayList<>();
 		iterable.forEach(list::add);
 		return list.stream();
+	}
+
+	static <T> List<T> multitask(Executor executor, Supplier<T>[] tasks) {
+		CompletableFuture<T>[] futures = new CompletableFuture[tasks.length];
+
+		for (int i = 0; i < tasks.length; i++) {
+			futures[i] = CompletableFuture.supplyAsync(tasks[i], executor);
+		}
+
+		try {
+			return CompletableFuture.allOf(futures).thenApply(v -> {
+				var list = new ArrayList<T>(tasks.length);
+
+				for (var f : futures) {
+					list.add(f.join());
+				}
+
+				return list;
+			}).get();
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
 	}
 }
