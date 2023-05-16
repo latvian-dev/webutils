@@ -152,4 +152,8 @@ public class JSONObject extends LinkedHashMap<String, Object> {
 	public String toString() {
 		return JSON.DEFAULT.write(this);
 	}
+
+	public String toPrettyString() {
+		return JSON.DEFAULT.writePretty(this);
+	}
 }

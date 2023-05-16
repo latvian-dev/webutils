@@ -1,6 +1,6 @@
 package dev.latvian.apps.webutils.json;
 
-import dev.latvian.apps.webutils.MiscUtils;
+import dev.latvian.apps.webutils.Cast;
 import dev.latvian.apps.webutils.data.HexId32;
 import dev.latvian.apps.webutils.data.HexId64;
 
@@ -45,31 +45,31 @@ public class JSONArray extends ArrayList<Object> {
 	}
 
 	public List<JSONObject> ofObjects() {
-		return MiscUtils.cast(this);
+		return Cast.to(this);
 	}
 
 	public List<JSONArray> ofArrays() {
-		return MiscUtils.cast(this);
+		return Cast.to(this);
 	}
 
 	public List<String> ofStrings() {
-		return MiscUtils.cast(this);
+		return Cast.to(this);
 	}
 
 	public List<Number> ofNumbers() {
-		return MiscUtils.cast(this);
+		return Cast.to(this);
 	}
 
 	public List<Boolean> ofBooleans() {
-		return MiscUtils.cast(this);
+		return Cast.to(this);
 	}
 
 	public List<HexId32> ofHex32s() {
-		return MiscUtils.cast(this);
+		return Cast.to(this);
 	}
 
 	public List<HexId64> ofHex64s() {
-		return MiscUtils.cast(this);
+		return Cast.to(this);
 	}
 
 	@Override
@@ -180,5 +180,9 @@ public class JSONArray extends ArrayList<Object> {
 	@Override
 	public String toString() {
 		return JSON.DEFAULT.write(this);
+	}
+
+	public String toPrettyString() {
+		return JSON.DEFAULT.writePretty(this);
 	}
 }

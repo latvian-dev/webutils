@@ -1,6 +1,6 @@
 package dev.latvian.apps.webutils.data;
 
-import dev.latvian.apps.webutils.MiscUtils;
+import dev.latvian.apps.webutils.Cast;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
@@ -9,7 +9,7 @@ public class Mutable<T> {
 	private static final Function<Object, Mutable<?>> MAP_VALUE = o -> new Mutable<>();
 
 	public static <T> Function<Object, Mutable<T>> mapValue() {
-		return MiscUtils.cast(MAP_VALUE);
+		return Cast.to(MAP_VALUE);
 	}
 
 	public T value = null;

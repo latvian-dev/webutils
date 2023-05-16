@@ -1,6 +1,6 @@
 package dev.latvian.apps.webutils.json;
 
-import dev.latvian.apps.webutils.MiscUtils;
+import dev.latvian.apps.webutils.Cast;
 import dev.latvian.apps.webutils.data.HexId32;
 import dev.latvian.apps.webutils.data.HexId64;
 import org.jetbrains.annotations.Nullable;
@@ -262,7 +262,7 @@ public class JSON {
 		}
 		// Other
 		else {
-			getAdapter(value.getClass()).write(this, writer, MiscUtils.cast(value), depth, pretty);
+			getAdapter(value.getClass()).write(this, writer, Cast.to(value), depth, pretty);
 		}
 	}
 
@@ -313,7 +313,7 @@ public class JSON {
 		}
 		// Other
 		else {
-			return MiscUtils.cast(getAdapter(t).adapt(value));
+			return Cast.to(getAdapter(t).adapt(value));
 		}
 	}
 }
