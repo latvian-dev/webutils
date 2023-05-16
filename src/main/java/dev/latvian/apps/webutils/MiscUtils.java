@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -40,15 +41,19 @@ public interface MiscUtils {
 	}
 
 	static <T> List<T> multitaskSupply(Executor executor, Supplier<T>[] tasks) {
-		CompletableFuture<T>[] futures = new CompletableFuture[tasks.length];
+		return multitaskSupply(executor, Arrays.asList(tasks));
+	}
 
-		for (int i = 0; i < tasks.length; i++) {
-			futures[i] = CompletableFuture.supplyAsync(tasks[i], executor);
+	static <T> List<T> multitaskSupply(Executor executor, List<Supplier<T>> tasks) {
+		CompletableFuture<T>[] futures = new CompletableFuture[tasks.size()];
+
+		for (int i = 0; i < tasks.size(); i++) {
+			futures[i] = CompletableFuture.supplyAsync(tasks.get(i), executor);
 		}
 
 		try {
 			return CompletableFuture.allOf(futures).thenApply(v -> {
-				var list = new ArrayList<T>(tasks.length);
+				var list = new ArrayList<T>(tasks.size());
 
 				for (var f : futures) {
 					list.add(f.join());
@@ -62,10 +67,14 @@ public interface MiscUtils {
 	}
 
 	static void multitaskRun(Executor executor, Runnable[] tasks) {
-		CompletableFuture<Void>[] futures = new CompletableFuture[tasks.length];
+		multitaskRun(executor, Arrays.asList(tasks));
+	}
 
-		for (int i = 0; i < tasks.length; i++) {
-			futures[i] = CompletableFuture.runAsync(tasks[i], executor);
+	static void multitaskRun(Executor executor, List<Runnable> tasks) {
+		CompletableFuture<Void>[] futures = new CompletableFuture[tasks.size()];
+
+		for (int i = 0; i < tasks.size(); i++) {
+			futures[i] = CompletableFuture.runAsync(tasks.get(i), executor);
 		}
 
 		try {
