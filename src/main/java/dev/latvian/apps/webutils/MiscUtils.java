@@ -39,7 +39,7 @@ public interface MiscUtils {
 		return list.stream();
 	}
 
-	static <T> List<T> multitask(Executor executor, Supplier<T>[] tasks) {
+	static <T> List<T> multitaskSupply(Executor executor, Supplier<T>[] tasks) {
 		CompletableFuture<T>[] futures = new CompletableFuture[tasks.length];
 
 		for (int i = 0; i < tasks.length; i++) {
@@ -56,6 +56,20 @@ public interface MiscUtils {
 
 				return list;
 			}).get();
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
+	static void multitaskRun(Executor executor, Runnable[] tasks) {
+		CompletableFuture<Void>[] futures = new CompletableFuture[tasks.length];
+
+		for (int i = 0; i < tasks.length; i++) {
+			futures[i] = CompletableFuture.runAsync(tasks[i], executor);
+		}
+
+		try {
+			CompletableFuture.allOf(futures).get();
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
