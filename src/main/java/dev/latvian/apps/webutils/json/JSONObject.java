@@ -55,7 +55,7 @@ public class JSONObject extends LinkedHashMap<String, Object> {
 		return (JSONObject) get(key);
 	}
 
-	public JSONObject makeObject(String key) {
+	public JSONObject addObject(String key) {
 		return (JSONObject) computeIfAbsent(key, JSONObject::new);
 	}
 
@@ -64,7 +64,7 @@ public class JSONObject extends LinkedHashMap<String, Object> {
 		return o instanceof JSONArray a ? a : JSONArray.of(o);
 	}
 
-	public JSONArray makeArray(String key) {
+	public JSONArray addArray(String key) {
 		return (JSONArray) computeIfAbsent(key, JSONArray::new);
 	}
 
