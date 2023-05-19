@@ -2,9 +2,13 @@ package dev.latvian.apps.webutils;
 
 import dev.latvian.apps.webutils.math.MathUtils;
 
+import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public interface ImageUtils {
 	static BufferedImage resize(BufferedImage image, int width, int height) {
@@ -34,5 +38,10 @@ public interface ImageUtils {
 		g.drawImage(image, (width - w1) / 2, (height - h1) / 2, w1, h1, null);
 		g.dispose();
 		return resized;
+	}
+
+	static OutputStream resize(InputStream in, OutputStream out, String format, int width, int height) throws IOException {
+		ImageIO.write(resize(ImageIO.read(in), width, height), format, out);
+		return out;
 	}
 }
