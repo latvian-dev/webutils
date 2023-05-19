@@ -9,18 +9,18 @@ import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 
 public record FileResponse(HttpStatus status, String contentType, byte[] data) implements Response {
-	public static Response of(HttpStatus code, String contentType, byte[] data) {
+	public static FileResponse of(HttpStatus code, String contentType, byte[] data) {
 		return new FileResponse(code, contentType, data);
 	}
 
-	public static Response plainText(String text) {
-		return of(HttpStatus.OK, "text/plain; charset=utf-8", text.getBytes(StandardCharsets.UTF_8));
+	public static FileResponse plainText(String text) {
+		return of(HttpStatus.OK, MimeType.TEXT, text.getBytes(StandardCharsets.UTF_8));
 	}
 
-	public static Response image(BufferedImage img) throws Exception {
+	public static FileResponse png(BufferedImage img) throws Exception {
 		var out = new ByteArrayOutputStream();
 		ImageIO.write(img, "PNG", out);
-		return of(HttpStatus.OK, "image/png", out.toByteArray());
+		return of(HttpStatus.OK, MimeType.PNG, out.toByteArray());
 	}
 
 	@Override

@@ -3,8 +3,6 @@ package dev.latvian.apps.webutils;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,22 +13,6 @@ public interface FormattingUtils {
 	Pattern REMOVE_DASHES = Pattern.compile("-{2,}");
 	Pattern NON_W_PATTERN = Pattern.compile("\\W");
 	Pattern STACK_AT_PATTERN = Pattern.compile("([ \\t]+at )([\\w./$@]+)\\.([\\w/$]+)\\.(<init>|[\\w$]+)\\((Unknown Source|\\.dynamic|Native Method|[\\w.$]+:\\d+)\\)(?: ~?\\[.*:.*])?(?: \\{.*})?");
-	Calendar FORMAT_CALENDAR = Calendar.getInstance();
-
-	String[] MONTH_NAMES = {
-			"Jan",
-			"Feb",
-			"Mar",
-			"Apr",
-			"May",
-			"Jun",
-			"Jul",
-			"Aug",
-			"Sep",
-			"Oct",
-			"Nov",
-			"Dec",
-	};
 
 	static String format(long number) {
 		return LONG_FORMAT.format(number);
@@ -160,71 +142,21 @@ public interface FormattingUtils {
 		sb.append(num);
 	}
 
-	static StringBuilder formatDate(StringBuilder sb, @Nullable Date date) {
-		if (date == null) {
-			return sb.append("Unknown");
+	static String percent(double d) {
+		if (d <= 0D) {
+			return "0%";
+		} else if (d >= 1D) {
+			return "100%";
 		}
 
-		FORMAT_CALENDAR.setTime(date);
-		pad0(sb, FORMAT_CALENDAR.get(Calendar.DAY_OF_MONTH));
-		sb.append('-');
-		sb.append(MONTH_NAMES[FORMAT_CALENDAR.get(Calendar.MONTH)]);
-		sb.append('-');
-		sb.append(FORMAT_CALENDAR.get(Calendar.YEAR));
-		sb.append(' ');
-		pad0(sb, FORMAT_CALENDAR.get(Calendar.HOUR_OF_DAY));
-		sb.append(':');
-		pad0(sb, FORMAT_CALENDAR.get(Calendar.MINUTE));
-		sb.append(':');
-		pad0(sb, FORMAT_CALENDAR.get(Calendar.SECOND));
-		return sb;
+		if (d < 0.0001D) {
+			return (d * 100D) + "%";
+		}
+
+		return ((int) (d * 10000L) / 100D) + "%";
 	}
 
-	static StringBuilder relativeTime(StringBuilder sb, long millis) {
-		if (millis == 0L) {
-			return sb.append("now");
-		}
-
-		boolean neg = millis < 0L;
-		millis = Math.abs(millis);
-
-		long seconds = millis / 1000L;
-		long days = seconds / 86400L;
-		long hours = seconds / 3600L % 24L;
-		long minutes = seconds / 60L % 60L;
-		long secs = seconds % 60L;
-
-		if (millis < 1000L) {
-			sb.append(millis);
-			sb.append("ms");
-			sb.append(' ');
-		} else {
-			if (days > 0) {
-				sb.append(days);
-				sb.append('d');
-				sb.append(' ');
-			}
-
-			if (days > 0 || hours > 0) {
-				sb.append(hours);
-				sb.append('h');
-				sb.append(' ');
-			}
-
-			if (days == 0) {
-				if (hours > 0 || minutes > 0) {
-					sb.append(minutes);
-					sb.append('m');
-					sb.append(' ');
-				}
-
-				sb.append(secs);
-				sb.append('s');
-				sb.append(' ');
-			}
-		}
-
-		sb.append(neg ? "ago" : "from now");
-		return sb;
+	static String percent(long value, long total) {
+		return percent((double) value / (double) total);
 	}
 }

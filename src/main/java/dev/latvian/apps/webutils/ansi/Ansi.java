@@ -1,6 +1,6 @@
 package dev.latvian.apps.webutils.ansi;
 
-import dev.latvian.apps.webutils.FormattingUtils;
+import dev.latvian.apps.webutils.TimeUtils;
 
 import java.util.Date;
 import java.util.regex.Pattern;
@@ -134,7 +134,7 @@ public interface Ansi {
 	static Date log(Object message, boolean newline) {
 		var c = of();
 		var now = new Date();
-		c.append(cyan(FormattingUtils.formatDate(new StringBuilder(), now).toString()));
+		c.append(cyan(TimeUtils.formatDate(new StringBuilder(), now).toString()));
 
 		var c1 = of(message);
 

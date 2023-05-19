@@ -5,6 +5,20 @@ public record Color4f(float r, float g, float b, float a) {
 	public static final Color4f BLACK = new Color4f(0F, 0F, 0F, 1F);
 	public static final Color4f WHITE = new Color4f(1F, 1F, 1F, 1F);
 
+	private static final Color4f[] CHART_COLORS = new Color4f[24];
+
+	static {
+		float off = 4F / 6F;
+
+		for (int i = 0; i < 6; i++) {
+			float f = off - i / 6F;
+			CHART_COLORS[i] = ofHSB(f, 0.8F, 0.8F, 1F);
+			CHART_COLORS[i + 6] = ofHSB(f + 2F / 24F, 0.8F, 0.8F, 1F);
+			CHART_COLORS[i + 12] = ofHSB(f + 1F / 24F, 0.8F, 0.8F, 1F);
+			CHART_COLORS[i + 18] = ofHSB(f + 3F / 24F, 0.8F, 0.8F, 1F);
+		}
+	}
+
 	public static Color4f ofHSB(float h, float s, float b, float a) {
 		int i = (int) (h * 6F) % 6;
 		float h6 = h * 6F - (float) i;
@@ -21,6 +35,11 @@ public record Color4f(float r, float g, float b, float a) {
 			case 5 -> new Color4f(b, p, q, a);
 			default -> Color4f.BLACK;
 		};
+	}
+
+	public static Color4f getChartColor(int id) {
+		int i = id % CHART_COLORS.length;
+		return CHART_COLORS[i < 0 ? (i + CHART_COLORS.length) : i];
 	}
 
 	public Color4f(float r, float g, float b) {
