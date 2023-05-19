@@ -40,8 +40,8 @@ public interface ImageUtils {
 		return resized;
 	}
 
-	static OutputStream resize(InputStream in, OutputStream out, String format, int width, int height) throws IOException {
-		ImageIO.write(resize(ImageIO.read(in), width, height), format, out);
+	static OutputStream resize(InputStream in, OutputStream out, int width, int height) throws IOException {
+		ImageIO.write(resize(ImageIO.read(in), width, height), "png", out);
 		return out;
 	}
 }
