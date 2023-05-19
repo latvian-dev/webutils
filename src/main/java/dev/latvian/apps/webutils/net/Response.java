@@ -4,7 +4,8 @@ import io.javalin.http.Context;
 import io.javalin.http.Cookie;
 import io.javalin.http.HttpStatus;
 
-@FunctionalInterface
+import java.time.Duration;
+
 public interface Response {
 	Response NO_CONTENT = new Response() {
 		@Override
@@ -26,9 +27,9 @@ public interface Response {
 		return new RedirectResponse(HttpStatus.MOVED_PERMANENTLY, path);
 	}
 
-	default HttpStatus getStatus() {
-		return HttpStatus.OK;
-	}
+	HttpStatus getStatus();
+
+	void result(Context ctx);
 
 	default Response withCookie(Cookie cookie) {
 		return new ResponseWithCookie(this, cookie);
@@ -42,5 +43,15 @@ public interface Response {
 		return new ResponseWithHeader(this, key, value);
 	}
 
-	void result(Context ctx);
+	default Response cache(Duration duration, boolean privateCache) {
+		return withHeader("Cache-Control", (privateCache ? "private" : "public") + ", max-age=" + duration.getSeconds());
+	}
+
+	default Response cache(Duration duration) {
+		return cache(duration, false);
+	}
+
+	default Response privateCache(Duration duration) {
+		return cache(duration, true);
+	}
 }

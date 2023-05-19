@@ -24,6 +24,11 @@ public record FileResponse(HttpStatus status, String contentType, byte[] data) i
 	}
 
 	@Override
+	public HttpStatus getStatus() {
+		return status;
+	}
+
+	@Override
 	public void result(Context ctx) {
 		ctx.status(status);
 		ctx.contentType(contentType);
