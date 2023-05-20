@@ -4,6 +4,7 @@ import io.javalin.http.Context;
 import io.javalin.http.Cookie;
 import io.javalin.http.HttpStatus;
 
+import java.net.http.HttpRequest;
 import java.time.Duration;
 
 public interface Response {
@@ -53,5 +54,9 @@ public interface Response {
 
 	default Response privateCache(Duration duration) {
 		return cache(duration, true);
+	}
+
+	default HttpRequest.BodyPublisher bodyPublisher() {
+		throw new IllegalStateException("Body publisher not supported");
 	}
 }

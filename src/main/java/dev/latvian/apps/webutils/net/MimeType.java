@@ -7,4 +7,5 @@ public interface MimeType {
 	String PNG = "image/png";
 	String JPEG = "image/jpeg";
 	String GIF = "image/gif";
+	String FORM = "application/x-www-form-urlencoded";
 }

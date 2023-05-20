@@ -96,7 +96,7 @@ public interface CodingUtils {
 				sb.append(sep);
 			}
 
-			sb.append(entry.getKey());
+			sb.append(encodeURL(entry.getKey()));
 
 			if (!entry.getValue().isEmpty()) {
 				sb.append('=');
@@ -133,5 +133,21 @@ public interface CodingUtils {
 		}
 
 		return m;
+	}
+
+	static String formData(Map<String, Object> map) {
+		var sb = new StringBuilder();
+
+		for (var entry : map.entrySet()) {
+			if (sb.length() > 0) {
+				sb.append('&');
+			}
+
+			sb.append(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8));
+			sb.append('=');
+			sb.append(URLEncoder.encode(entry.getValue().toString(), StandardCharsets.UTF_8));
+		}
+
+		return sb.toString();
 	}
 }

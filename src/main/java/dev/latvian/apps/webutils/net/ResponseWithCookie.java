@@ -4,6 +4,8 @@ import io.javalin.http.Context;
 import io.javalin.http.Cookie;
 import io.javalin.http.HttpStatus;
 
+import java.net.http.HttpRequest;
+
 record ResponseWithCookie(Response original, Cookie cookie) implements Response {
 	@Override
 	public HttpStatus getStatus() {
@@ -14,5 +16,10 @@ record ResponseWithCookie(Response original, Cookie cookie) implements Response 
 	public void result(Context ctx) {
 		original.result(ctx);
 		ctx.cookie(cookie);
+	}
+
+	@Override
+	public HttpRequest.BodyPublisher bodyPublisher() {
+		return original.bodyPublisher();
 	}
 }
