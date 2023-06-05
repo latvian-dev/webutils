@@ -10,9 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public interface CodingUtils {
-	MessageDigest MD5 = getMD5();
-	MessageDigest SHA1 = getSHA1();
-	byte[] HEX_ARRAY = "0123456789ABCDEF".getBytes(StandardCharsets.US_ASCII);
+	byte[] HEX_ARRAY = "0123456789abcdef".getBytes(StandardCharsets.US_ASCII);
 
 	private static MessageDigest getMD5() {
 		try {
@@ -44,8 +42,7 @@ public interface CodingUtils {
 	}
 
 	static String md5(byte[] bytes) {
-		MD5.reset();
-		return hex(MD5.digest(bytes));
+		return hex(getMD5().digest(bytes));
 	}
 
 	static String md5(String string) {
@@ -53,8 +50,7 @@ public interface CodingUtils {
 	}
 
 	static String sha1(byte[] bytes) {
-		SHA1.reset();
-		return hex(SHA1.digest(bytes));
+		return hex(getSHA1().digest(bytes));
 	}
 
 	static String sha1(String string) {
