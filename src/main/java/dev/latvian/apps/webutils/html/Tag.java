@@ -243,6 +243,10 @@ public abstract class Tag implements TagConvertible {
 		return link(key1, value1).attr(key2, value2);
 	}
 
+	public Tag stylesheet(String path) {
+		return link("rel", "stylesheet", "href", path);
+	}
+
 	public Tag br() {
 		unpaired("br");
 		return this;
