@@ -396,12 +396,20 @@ public abstract class Tag implements TagConvertible {
 		return paired("td");
 	}
 
+	public Tag code() {
+		return paired("code");
+	}
+
 	public Tag script(String src) {
 		return paired("script").attr("src", src);
 	}
 
 	public Tag deferScript(String src) {
 		return script(src).attr("defer");
+	}
+
+	public Tag asyncScript(String src) {
+		return script(src).attr("async");
 	}
 
 	public FormTag form(String method) {
