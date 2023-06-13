@@ -400,6 +400,10 @@ public abstract class Tag implements TagConvertible {
 		return paired("code");
 	}
 
+	public Tag code(Object string) {
+		return paired("code").string(string).end();
+	}
+
 	public Tag script(String src) {
 		return paired("script").attr("src", src);
 	}
