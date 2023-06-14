@@ -8,4 +8,5 @@ public interface MimeType {
 	String JPEG = "image/jpeg";
 	String GIF = "image/gif";
 	String FORM = "application/x-www-form-urlencoded";
+	String XML = "application/xml; charset=utf-8";
 }

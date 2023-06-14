@@ -401,7 +401,7 @@ public abstract class Tag implements TagConvertible {
 	}
 
 	public Tag code(Object string) {
-		return paired("code").string(string).end();
+		return code().string(string).end();
 	}
 
 	public Tag script(String src) {
