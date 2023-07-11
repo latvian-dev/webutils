@@ -1,5 +1,6 @@
 package dev.latvian.apps.webutils.ansi;
 
+import dev.latvian.apps.webutils.json.JSON;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -10,7 +11,7 @@ public class AnsiJava {
 	}
 
 	private static AnsiComponent of0(@Nullable Object object, int depth) {
-		if (object == null) {
+		if (object == null || object == JSON.NULL) {
 			return Ansi.darkRed("null");
 		} else if (object instanceof Map<?, ?> map) {
 			var builder = Ansi.of().debugColor(depth);
