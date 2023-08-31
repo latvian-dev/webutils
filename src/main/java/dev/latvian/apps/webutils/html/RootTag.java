@@ -1,6 +1,11 @@
 package dev.latvian.apps.webutils.html;
 
+import dev.latvian.apps.webutils.net.FileResponse;
+import dev.latvian.apps.webutils.net.Response;
+import io.javalin.http.HttpStatus;
+
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class RootTag extends PairedTag {
@@ -82,5 +87,10 @@ public class RootTag extends PairedTag {
 	public void write(Writer writer) throws Throwable {
 		writer.write("<!DOCTYPE html>");
 		super.write(writer);
+	}
+
+	@Override
+	public Response asResponse(HttpStatus status) {
+		return FileResponse.of(status, "text/html; charset=utf-8", toString().getBytes(StandardCharsets.UTF_8));
 	}
 }

@@ -1,7 +1,6 @@
 package dev.latvian.apps.webutils.html;
 
 import dev.latvian.apps.webutils.ansi.Ansi;
-import dev.latvian.apps.webutils.net.FileResponse;
 import dev.latvian.apps.webutils.net.Response;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
@@ -130,7 +129,7 @@ public abstract class Tag implements TagConvertible {
 	}
 
 	public Response asResponse(HttpStatus status) {
-		return FileResponse.of(status, "text/html; charset=utf-8", getRoot().toString().getBytes(StandardCharsets.UTF_8));
+		return getRoot().asResponse(status);
 	}
 
 	public Tag string(Object string) {
