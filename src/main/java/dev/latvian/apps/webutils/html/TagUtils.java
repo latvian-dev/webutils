@@ -1,279 +1,277 @@
 package dev.latvian.apps.webutils.html;
 
+import dev.latvian.apps.webutils.ansi.Ansi;
+import dev.latvian.apps.webutils.ansi.AnsiComponent;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashMap;
 import java.util.Map;
 
 public class TagUtils {
-	private static final HashMap<Character, String> htmlEncodeChars = new HashMap<>();
+	public static final int[] ANSI_COLORS = {
+			13, // MAGENTA
+			5, // PURPLE
+			12, // BLUE
+			14, // CYAN
+	};
 
-	static {
-
-		// Special characters for HTML
-		htmlEncodeChars.put('&', "&amp;");
-		htmlEncodeChars.put('<', "&lt;");
-		htmlEncodeChars.put('>', "&gt;");
-		htmlEncodeChars.put('"', "&quot;");
-
-		htmlEncodeChars.put('Œ', "&OElig;");
-		htmlEncodeChars.put('œ', "&oelig;");
-		htmlEncodeChars.put('Š', "&Scaron;");
-		htmlEncodeChars.put('š', "&scaron;");
-		htmlEncodeChars.put('Ÿ', "&Yuml;");
-		htmlEncodeChars.put('ˆ', "&circ;");
-		htmlEncodeChars.put('˜', "&tilde;");
-		htmlEncodeChars.put('\u2002', "&ensp;");
-		htmlEncodeChars.put('\u2003', "&emsp;");
-		htmlEncodeChars.put('\u2009', "&thinsp;");
-		htmlEncodeChars.put('\u200C', "&zwnj;");
-		htmlEncodeChars.put('\u200D', "&zwj;");
-		htmlEncodeChars.put('\u200E', "&lrm;");
-		htmlEncodeChars.put('\u200F', "&rlm;");
-		htmlEncodeChars.put('–', "&ndash;");
-		htmlEncodeChars.put('—', "&mdash;");
-		htmlEncodeChars.put('‘', "&lsquo;");
-		htmlEncodeChars.put('’', "&rsquo;");
-		htmlEncodeChars.put('‚', "&sbquo;");
-		htmlEncodeChars.put('“', "&ldquo;");
-		htmlEncodeChars.put('”', "&rdquo;");
-		htmlEncodeChars.put('„', "&bdquo;");
-		htmlEncodeChars.put('†', "&dagger;");
-		htmlEncodeChars.put('‡', "&Dagger;");
-		htmlEncodeChars.put('‰', "&permil;");
-		htmlEncodeChars.put('‹', "&lsaquo;");
-		htmlEncodeChars.put('›', "&rsaquo;");
-		htmlEncodeChars.put('€', "&euro;");
-
-		// Character entity references for ISO 8859-1 characters
-		htmlEncodeChars.put('\u00A0', "&nbsp;");
-		htmlEncodeChars.put('¡', "&iexcl;");
-		htmlEncodeChars.put('¢', "&cent;");
-		htmlEncodeChars.put('£', "&pound;");
-		htmlEncodeChars.put('¤', "&curren;");
-		htmlEncodeChars.put('¥', "&yen;");
-		htmlEncodeChars.put('¦', "&brvbar;");
-		htmlEncodeChars.put('§', "&sect;");
-		htmlEncodeChars.put('¨', "&uml;");
-		htmlEncodeChars.put('©', "&copy;");
-		htmlEncodeChars.put('ª', "&ordf;");
-		htmlEncodeChars.put('«', "&laquo;");
-		htmlEncodeChars.put('¬', "&not;");
-		htmlEncodeChars.put('\u00AD', "&shy;");
-		htmlEncodeChars.put('®', "&reg;");
-		htmlEncodeChars.put('¯', "&macr;");
-		htmlEncodeChars.put('°', "&deg;");
-		htmlEncodeChars.put('±', "&plusmn;");
-		htmlEncodeChars.put('²', "&sup2;");
-		htmlEncodeChars.put('³', "&sup3;");
-		htmlEncodeChars.put('´', "&acute;");
-		htmlEncodeChars.put('µ', "&micro;");
-		htmlEncodeChars.put('¶', "&para;");
-		htmlEncodeChars.put('·', "&middot;");
-		htmlEncodeChars.put('¸', "&cedil;");
-		htmlEncodeChars.put('¹', "&sup1;");
-		htmlEncodeChars.put('º', "&ordm;");
-		htmlEncodeChars.put('»', "&raquo;");
-		htmlEncodeChars.put('¼', "&frac14;");
-		htmlEncodeChars.put('½', "&frac12;");
-		htmlEncodeChars.put('¾', "&frac34;");
-		htmlEncodeChars.put('¿', "&iquest;");
-		htmlEncodeChars.put('À', "&Agrave;");
-		htmlEncodeChars.put('Á', "&Aacute;");
-		htmlEncodeChars.put('Â', "&Acirc;");
-		htmlEncodeChars.put('Ã', "&Atilde;");
-		htmlEncodeChars.put('Ä', "&Auml;");
-		htmlEncodeChars.put('Å', "&Aring;");
-		htmlEncodeChars.put('Æ', "&AElig;");
-		htmlEncodeChars.put('Ç', "&Ccedil;");
-		htmlEncodeChars.put('È', "&Egrave;");
-		htmlEncodeChars.put('É', "&Eacute;");
-		htmlEncodeChars.put('Ê', "&Ecirc;");
-		htmlEncodeChars.put('Ë', "&Euml;");
-		htmlEncodeChars.put('Ì', "&Igrave;");
-		htmlEncodeChars.put('Í', "&Iacute;");
-		htmlEncodeChars.put('Î', "&Icirc;");
-		htmlEncodeChars.put('Ï', "&Iuml;");
-		htmlEncodeChars.put('Ð', "&ETH;");
-		htmlEncodeChars.put('Ñ', "&Ntilde;");
-		htmlEncodeChars.put('Ò', "&Ograve;");
-		htmlEncodeChars.put('Ó', "&Oacute;");
-		htmlEncodeChars.put('Ô', "&Ocirc;");
-		htmlEncodeChars.put('Õ', "&Otilde;");
-		htmlEncodeChars.put('Ö', "&Ouml;");
-		htmlEncodeChars.put('×', "&times;");
-		htmlEncodeChars.put('Ø', "&Oslash;");
-		htmlEncodeChars.put('Ù', "&Ugrave;");
-		htmlEncodeChars.put('Ú', "&Uacute;");
-		htmlEncodeChars.put('Û', "&Ucirc;");
-		htmlEncodeChars.put('Ü', "&Uuml;");
-		htmlEncodeChars.put('Ý', "&Yacute;");
-		htmlEncodeChars.put('Þ', "&THORN;");
-		htmlEncodeChars.put('ß', "&szlig;");
-		htmlEncodeChars.put('à', "&agrave;");
-		htmlEncodeChars.put('á', "&aacute;");
-		htmlEncodeChars.put('â', "&acirc;");
-		htmlEncodeChars.put('ã', "&atilde;");
-		htmlEncodeChars.put('ä', "&auml;");
-		htmlEncodeChars.put('å', "&aring;");
-		htmlEncodeChars.put('æ', "&aelig;");
-		htmlEncodeChars.put('ç', "&ccedil;");
-		htmlEncodeChars.put('è', "&egrave;");
-		htmlEncodeChars.put('é', "&eacute;");
-		htmlEncodeChars.put('ê', "&ecirc;");
-		htmlEncodeChars.put('ë', "&euml;");
-		htmlEncodeChars.put('ì', "&igrave;");
-		htmlEncodeChars.put('í', "&iacute;");
-		htmlEncodeChars.put('î', "&icirc;");
-		htmlEncodeChars.put('ï', "&iuml;");
-		htmlEncodeChars.put('ð', "&eth;");
-		htmlEncodeChars.put('ñ', "&ntilde;");
-		htmlEncodeChars.put('ò', "&ograve;");
-		htmlEncodeChars.put('ó', "&oacute;");
-		htmlEncodeChars.put('ô', "&ocirc;");
-		htmlEncodeChars.put('õ', "&otilde;");
-		htmlEncodeChars.put('ö', "&ouml;");
-		htmlEncodeChars.put('÷', "&divide;");
-		htmlEncodeChars.put('ø', "&oslash;");
-		htmlEncodeChars.put('ù', "&ugrave;");
-		htmlEncodeChars.put('ú', "&uacute;");
-		htmlEncodeChars.put('û', "&ucirc;");
-		htmlEncodeChars.put('ü', "&uuml;");
-		htmlEncodeChars.put('ý', "&yacute;");
-		htmlEncodeChars.put('þ', "&thorn;");
-		htmlEncodeChars.put('ÿ', "&yuml;");
-
-		// Mathematical, Greek and Symbolic characters for HTML
-		htmlEncodeChars.put('ƒ', "&fnof;");
-		htmlEncodeChars.put('Α', "&Alpha;");
-		htmlEncodeChars.put('Β', "&Beta;");
-		htmlEncodeChars.put('Γ', "&Gamma;");
-		htmlEncodeChars.put('Δ', "&Delta;");
-		htmlEncodeChars.put('Ε', "&Epsilon;");
-		htmlEncodeChars.put('Ζ', "&Zeta;");
-		htmlEncodeChars.put('Η', "&Eta;");
-		htmlEncodeChars.put('Θ', "&Theta;");
-		htmlEncodeChars.put('Ι', "&Iota;");
-		htmlEncodeChars.put('Κ', "&Kappa;");
-		htmlEncodeChars.put('Λ', "&Lambda;");
-		htmlEncodeChars.put('Μ', "&Mu;");
-		htmlEncodeChars.put('Ν', "&Nu;");
-		htmlEncodeChars.put('Ξ', "&Xi;");
-		htmlEncodeChars.put('Ο', "&Omicron;");
-		htmlEncodeChars.put('Π', "&Pi;");
-		htmlEncodeChars.put('Ρ', "&Rho;");
-		htmlEncodeChars.put('Σ', "&Sigma;");
-		htmlEncodeChars.put('Τ', "&Tau;");
-		htmlEncodeChars.put('Υ', "&Upsilon;");
-		htmlEncodeChars.put('Φ', "&Phi;");
-		htmlEncodeChars.put('Χ', "&Chi;");
-		htmlEncodeChars.put('Ψ', "&Psi;");
-		htmlEncodeChars.put('Ω', "&Omega;");
-		htmlEncodeChars.put('α', "&alpha;");
-		htmlEncodeChars.put('β', "&beta;");
-		htmlEncodeChars.put('γ', "&gamma;");
-		htmlEncodeChars.put('δ', "&delta;");
-		htmlEncodeChars.put('ε', "&epsilon;");
-		htmlEncodeChars.put('ζ', "&zeta;");
-		htmlEncodeChars.put('η', "&eta;");
-		htmlEncodeChars.put('θ', "&theta;");
-		htmlEncodeChars.put('ι', "&iota;");
-		htmlEncodeChars.put('κ', "&kappa;");
-		htmlEncodeChars.put('λ', "&lambda;");
-		htmlEncodeChars.put('μ', "&mu;");
-		htmlEncodeChars.put('ν', "&nu;");
-		htmlEncodeChars.put('ξ', "&xi;");
-		htmlEncodeChars.put('ο', "&omicron;");
-		htmlEncodeChars.put('π', "&pi;");
-		htmlEncodeChars.put('ρ', "&rho;");
-		htmlEncodeChars.put('ς', "&sigmaf;");
-		htmlEncodeChars.put('σ', "&sigma;");
-		htmlEncodeChars.put('τ', "&tau;");
-		htmlEncodeChars.put('υ', "&upsilon;");
-		htmlEncodeChars.put('φ', "&phi;");
-		htmlEncodeChars.put('χ', "&chi;");
-		htmlEncodeChars.put('ψ', "&psi;");
-		htmlEncodeChars.put('ω', "&omega;");
-		htmlEncodeChars.put('ϑ', "&thetasym;");
-		htmlEncodeChars.put('ϒ', "&upsih;");
-		htmlEncodeChars.put('ϖ', "&piv;");
-		htmlEncodeChars.put('•', "&bull;");
-		htmlEncodeChars.put('…', "&hellip;");
-		htmlEncodeChars.put('′', "&prime;");
-		htmlEncodeChars.put('″', "&Prime;");
-		htmlEncodeChars.put('‾', "&oline;");
-		htmlEncodeChars.put('⁄', "&frasl;");
-		htmlEncodeChars.put('℘', "&weierp;");
-		htmlEncodeChars.put('ℑ', "&image;");
-		htmlEncodeChars.put('ℜ', "&real;");
-		htmlEncodeChars.put('™', "&trade;");
-		htmlEncodeChars.put('ℵ', "&alefsym;");
-		htmlEncodeChars.put('←', "&larr;");
-		htmlEncodeChars.put('↑', "&uarr;");
-		htmlEncodeChars.put('→', "&rarr;");
-		htmlEncodeChars.put('↓', "&darr;");
-		htmlEncodeChars.put('↔', "&harr;");
-		htmlEncodeChars.put('↵', "&crarr;");
-		htmlEncodeChars.put('⇐', "&lArr;");
-		htmlEncodeChars.put('⇑', "&uArr;");
-		htmlEncodeChars.put('⇒', "&rArr;");
-		htmlEncodeChars.put('⇓', "&dArr;");
-		htmlEncodeChars.put('⇔', "&hArr;");
-		htmlEncodeChars.put('∀', "&forall;");
-		htmlEncodeChars.put('∂', "&part;");
-		htmlEncodeChars.put('∃', "&exist;");
-		htmlEncodeChars.put('∅', "&empty;");
-		htmlEncodeChars.put('∇', "&nabla;");
-		htmlEncodeChars.put('∈', "&isin;");
-		htmlEncodeChars.put('∉', "&notin;");
-		htmlEncodeChars.put('∋', "&ni;");
-		htmlEncodeChars.put('∏', "&prod;");
-		htmlEncodeChars.put('∑', "&sum;");
-		htmlEncodeChars.put('−', "&minus;");
-		htmlEncodeChars.put('∗', "&lowast;");
-		htmlEncodeChars.put('√', "&radic;");
-		htmlEncodeChars.put('∝', "&prop;");
-		htmlEncodeChars.put('∞', "&infin;");
-		htmlEncodeChars.put('∠', "&ang;");
-		htmlEncodeChars.put('∧', "&and;");
-		htmlEncodeChars.put('∨', "&or;");
-		htmlEncodeChars.put('∩', "&cap;");
-		htmlEncodeChars.put('∪', "&cup;");
-		htmlEncodeChars.put('∫', "&int;");
-		htmlEncodeChars.put('∴', "&there4;");
-		htmlEncodeChars.put('∼', "&sim;");
-		htmlEncodeChars.put('≅', "&cong;");
-		htmlEncodeChars.put('≈', "&asymp;");
-		htmlEncodeChars.put('≠', "&ne;");
-		htmlEncodeChars.put('≡', "&equiv;");
-		htmlEncodeChars.put('≤', "&le;");
-		htmlEncodeChars.put('≥', "&ge;");
-		htmlEncodeChars.put('⊂', "&sub;");
-		htmlEncodeChars.put('⊃', "&sup;");
-		htmlEncodeChars.put('⊄', "&nsub;");
-		htmlEncodeChars.put('⊆', "&sube;");
-		htmlEncodeChars.put('⊇', "&supe;");
-		htmlEncodeChars.put('⊕', "&oplus;");
-		htmlEncodeChars.put('⊗', "&otimes;");
-		htmlEncodeChars.put('⊥', "&perp;");
-		htmlEncodeChars.put('⋅', "&sdot;");
-		htmlEncodeChars.put('⌈', "&lceil;");
-		htmlEncodeChars.put('⌉', "&rceil;");
-		htmlEncodeChars.put('⌊', "&lfloor;");
-		htmlEncodeChars.put('⌋', "&rfloor;");
-		htmlEncodeChars.put('〈', "&lang;");
-		htmlEncodeChars.put('〉', "&rang;");
-		htmlEncodeChars.put('◊', "&loz;");
-		htmlEncodeChars.put('♠', "&spades;");
-		htmlEncodeChars.put('♣', "&clubs;");
-		htmlEncodeChars.put('♥', "&hearts;");
-		htmlEncodeChars.put('♦', "&diams;");
-	}
-
-	public static void encode(Writer writer, String source) throws IOException {
-		writer.write(encode(source));
+	public static String encode(char c) {
+		return switch (c) {
+			case '&' -> "&amp;";
+			case '<' -> "&lt;";
+			case '>' -> "&gt;";
+			case '"' -> "&quot;";
+			case 'Œ' -> "&OElig;";
+			case 'œ' -> "&oelig;";
+			case 'Š' -> "&Scaron;";
+			case 'š' -> "&scaron;";
+			case 'Ÿ' -> "&Yuml;";
+			case 'ˆ' -> "&circ;";
+			case '˜' -> "&tilde;";
+			case '\u2002' -> "&ensp;";
+			case '\u2003' -> "&emsp;";
+			case '\u2009' -> "&thinsp;";
+			case '\u200C' -> "&zwnj;";
+			case '\u200D' -> "&zwj;";
+			case '\u200E' -> "&lrm;";
+			case '\u200F' -> "&rlm;";
+			case '–' -> "&ndash;";
+			case '—' -> "&mdash;";
+			case '‘' -> "&lsquo;";
+			case '’' -> "&rsquo;";
+			case '‚' -> "&sbquo;";
+			case '“' -> "&ldquo;";
+			case '”' -> "&rdquo;";
+			case '„' -> "&bdquo;";
+			case '†' -> "&dagger;";
+			case '‡' -> "&Dagger;";
+			case '‰' -> "&permil;";
+			case '‹' -> "&lsaquo;";
+			case '›' -> "&rsaquo;";
+			case '€' -> "&euro;";
+			case '\u00A0' -> "&nbsp;";
+			case '¡' -> "&iexcl;";
+			case '¢' -> "&cent;";
+			case '£' -> "&pound;";
+			case '¤' -> "&curren;";
+			case '¥' -> "&yen;";
+			case '¦' -> "&brvbar;";
+			case '§' -> "&sect;";
+			case '¨' -> "&uml;";
+			case '©' -> "&copy;";
+			case 'ª' -> "&ordf;";
+			case '«' -> "&laquo;";
+			case '¬' -> "&not;";
+			case '\u00AD' -> "&shy;";
+			case '®' -> "&reg;";
+			case '¯' -> "&macr;";
+			case '°' -> "&deg;";
+			case '±' -> "&plusmn;";
+			case '²' -> "&sup2;";
+			case '³' -> "&sup3;";
+			case '´' -> "&acute;";
+			case 'µ' -> "&micro;";
+			case '¶' -> "&para;";
+			case '·' -> "&middot;";
+			case '¸' -> "&cedil;";
+			case '¹' -> "&sup1;";
+			case 'º' -> "&ordm;";
+			case '»' -> "&raquo;";
+			case '¼' -> "&frac14;";
+			case '½' -> "&frac12;";
+			case '¾' -> "&frac34;";
+			case '¿' -> "&iquest;";
+			case 'À' -> "&Agrave;";
+			case 'Á' -> "&Aacute;";
+			case 'Â' -> "&Acirc;";
+			case 'Ã' -> "&Atilde;";
+			case 'Ä' -> "&Auml;";
+			case 'Å' -> "&Aring;";
+			case 'Æ' -> "&AElig;";
+			case 'Ç' -> "&Ccedil;";
+			case 'È' -> "&Egrave;";
+			case 'É' -> "&Eacute;";
+			case 'Ê' -> "&Ecirc;";
+			case 'Ë' -> "&Euml;";
+			case 'Ì' -> "&Igrave;";
+			case 'Í' -> "&Iacute;";
+			case 'Î' -> "&Icirc;";
+			case 'Ï' -> "&Iuml;";
+			case 'Ð' -> "&ETH;";
+			case 'Ñ' -> "&Ntilde;";
+			case 'Ò' -> "&Ograve;";
+			case 'Ó' -> "&Oacute;";
+			case 'Ô' -> "&Ocirc;";
+			case 'Õ' -> "&Otilde;";
+			case 'Ö' -> "&Ouml;";
+			case '×' -> "&times;";
+			case 'Ø' -> "&Oslash;";
+			case 'Ù' -> "&Ugrave;";
+			case 'Ú' -> "&Uacute;";
+			case 'Û' -> "&Ucirc;";
+			case 'Ü' -> "&Uuml;";
+			case 'Ý' -> "&Yacute;";
+			case 'Þ' -> "&THORN;";
+			case 'ß' -> "&szlig;";
+			case 'à' -> "&agrave;";
+			case 'á' -> "&aacute;";
+			case 'â' -> "&acirc;";
+			case 'ã' -> "&atilde;";
+			case 'ä' -> "&auml;";
+			case 'å' -> "&aring;";
+			case 'æ' -> "&aelig;";
+			case 'ç' -> "&ccedil;";
+			case 'è' -> "&egrave;";
+			case 'é' -> "&eacute;";
+			case 'ê' -> "&ecirc;";
+			case 'ë' -> "&euml;";
+			case 'ì' -> "&igrave;";
+			case 'í' -> "&iacute;";
+			case 'î' -> "&icirc;";
+			case 'ï' -> "&iuml;";
+			case 'ð' -> "&eth;";
+			case 'ñ' -> "&ntilde;";
+			case 'ò' -> "&ograve;";
+			case 'ó' -> "&oacute;";
+			case 'ô' -> "&ocirc;";
+			case 'õ' -> "&otilde;";
+			case 'ö' -> "&ouml;";
+			case '÷' -> "&divide;";
+			case 'ø' -> "&oslash;";
+			case 'ù' -> "&ugrave;";
+			case 'ú' -> "&uacute;";
+			case 'û' -> "&ucirc;";
+			case 'ü' -> "&uuml;";
+			case 'ý' -> "&yacute;";
+			case 'þ' -> "&thorn;";
+			case 'ÿ' -> "&yuml;";
+			case 'ƒ' -> "&fnof;";
+			case 'Α' -> "&Alpha;";
+			case 'Β' -> "&Beta;";
+			case 'Γ' -> "&Gamma;";
+			case 'Δ' -> "&Delta;";
+			case 'Ε' -> "&Epsilon;";
+			case 'Ζ' -> "&Zeta;";
+			case 'Η' -> "&Eta;";
+			case 'Θ' -> "&Theta;";
+			case 'Ι' -> "&Iota;";
+			case 'Κ' -> "&Kappa;";
+			case 'Λ' -> "&Lambda;";
+			case 'Μ' -> "&Mu;";
+			case 'Ν' -> "&Nu;";
+			case 'Ξ' -> "&Xi;";
+			case 'Ο' -> "&Omicron;";
+			case 'Π' -> "&Pi;";
+			case 'Ρ' -> "&Rho;";
+			case 'Σ' -> "&Sigma;";
+			case 'Τ' -> "&Tau;";
+			case 'Υ' -> "&Upsilon;";
+			case 'Φ' -> "&Phi;";
+			case 'Χ' -> "&Chi;";
+			case 'Ψ' -> "&Psi;";
+			case 'Ω' -> "&Omega;";
+			case 'α' -> "&alpha;";
+			case 'β' -> "&beta;";
+			case 'γ' -> "&gamma;";
+			case 'δ' -> "&delta;";
+			case 'ε' -> "&epsilon;";
+			case 'ζ' -> "&zeta;";
+			case 'η' -> "&eta;";
+			case 'θ' -> "&theta;";
+			case 'ι' -> "&iota;";
+			case 'κ' -> "&kappa;";
+			case 'λ' -> "&lambda;";
+			case 'μ' -> "&mu;";
+			case 'ν' -> "&nu;";
+			case 'ξ' -> "&xi;";
+			case 'ο' -> "&omicron;";
+			case 'π' -> "&pi;";
+			case 'ρ' -> "&rho;";
+			case 'ς' -> "&sigmaf;";
+			case 'σ' -> "&sigma;";
+			case 'τ' -> "&tau;";
+			case 'υ' -> "&upsilon;";
+			case 'φ' -> "&phi;";
+			case 'χ' -> "&chi;";
+			case 'ψ' -> "&psi;";
+			case 'ω' -> "&omega;";
+			case 'ϑ' -> "&thetasym;";
+			case 'ϒ' -> "&upsih;";
+			case 'ϖ' -> "&piv;";
+			case '•' -> "&bull;";
+			case '…' -> "&hellip;";
+			case '′' -> "&prime;";
+			case '″' -> "&Prime;";
+			case '‾' -> "&oline;";
+			case '⁄' -> "&frasl;";
+			case '℘' -> "&weierp;";
+			case 'ℑ' -> "&image;";
+			case 'ℜ' -> "&real;";
+			case '™' -> "&trade;";
+			case 'ℵ' -> "&alefsym;";
+			case '←' -> "&larr;";
+			case '↑' -> "&uarr;";
+			case '→' -> "&rarr;";
+			case '↓' -> "&darr;";
+			case '↔' -> "&harr;";
+			case '↵' -> "&crarr;";
+			case '⇐' -> "&lArr;";
+			case '⇑' -> "&uArr;";
+			case '⇒' -> "&rArr;";
+			case '⇓' -> "&dArr;";
+			case '⇔' -> "&hArr;";
+			case '∀' -> "&forall;";
+			case '∂' -> "&part;";
+			case '∃' -> "&exist;";
+			case '∅' -> "&empty;";
+			case '∇' -> "&nabla;";
+			case '∈' -> "&isin;";
+			case '∉' -> "&notin;";
+			case '∋' -> "&ni;";
+			case '∏' -> "&prod;";
+			case '∑' -> "&sum;";
+			case '−' -> "&minus;";
+			case '∗' -> "&lowast;";
+			case '√' -> "&radic;";
+			case '∝' -> "&prop;";
+			case '∞' -> "&infin;";
+			case '∠' -> "&ang;";
+			case '∧' -> "&and;";
+			case '∨' -> "&or;";
+			case '∩' -> "&cap;";
+			case '∪' -> "&cup;";
+			case '∫' -> "&int;";
+			case '∴' -> "&there4;";
+			case '∼' -> "&sim;";
+			case '≅' -> "&cong;";
+			case '≈' -> "&asymp;";
+			case '≠' -> "&ne;";
+			case '≡' -> "&equiv;";
+			case '≤' -> "&le;";
+			case '≥' -> "&ge;";
+			case '⊂' -> "&sub;";
+			case '⊃' -> "&sup;";
+			case '⊄' -> "&nsub;";
+			case '⊆' -> "&sube;";
+			case '⊇' -> "&supe;";
+			case '⊕' -> "&oplus;";
+			case '⊗' -> "&otimes;";
+			case '⊥' -> "&perp;";
+			case '⋅' -> "&sdot;";
+			case '⌈' -> "&lceil;";
+			case '⌉' -> "&rceil;";
+			case '⌊' -> "&lfloor;";
+			case '⌋' -> "&rfloor;";
+			case '〈' -> "&lang;";
+			case '〉' -> "&rang;";
+			case '◊' -> "&loz;";
+			case '♠' -> "&spades;";
+			case '♣' -> "&clubs;";
+			case '♥' -> "&hearts;";
+			case '♦' -> "&diams;";
+			default -> "";
+		};
 	}
 
 	public static String encode(String source) {
@@ -281,50 +279,54 @@ public class TagUtils {
 			return source;
 		}
 
-		StringBuilder encoded_string = null;
-		char[] string_to_encode_array = source.toCharArray();
-		int last_match = -1;
-		int difference = 0;
+		StringBuilder builder = null;
+		var chars = source.toCharArray();
 
-		for (int i = 0; i < string_to_encode_array.length; i++) {
-			char char_to_encode = string_to_encode_array[i];
+		for (int i = 0; i < chars.length; i++) {
+			var encoded = encode(chars[i]);
 
-			if (TagUtils.htmlEncodeChars.containsKey(char_to_encode)) {
-
-				if (encoded_string == null) {
-
-					encoded_string = new StringBuilder(source.length());
+			if (!encoded.isEmpty()) {
+				if (builder == null) {
+					builder = new StringBuilder(source.length());
+					builder.append(chars, 0, i);
 				}
-				difference = i - (last_match + 1);
-				if (difference > 0) {
-					encoded_string.append(string_to_encode_array, last_match + 1, difference);
-				}
-				encoded_string.append(TagUtils.htmlEncodeChars.get(char_to_encode));
-				last_match = i;
+
+				builder.append(encoded);
+			} else if (builder != null) {
+				builder.append(chars[i]);
 			}
 		}
 
-		if (encoded_string == null) {
-			return source;
-		} else {
-			difference = string_to_encode_array.length - (last_match + 1);
-			if (difference > 0) {
-				encoded_string.append(string_to_encode_array, last_match + 1, difference);
-			}
-			return encoded_string.toString();
-		}
+		return builder == null ? source : builder.toString();
 	}
 
 	public static void writeAttributes(Writer writer, @Nullable Map<String, String> attributes) throws IOException {
 		if (attributes != null) {
-			for (Map.Entry<String, String> entry : attributes.entrySet()) {
+			for (var entry : attributes.entrySet()) {
 				writer.write(' ');
 				writer.write(entry.getKey());
 
 				if (!entry.getValue().equals("<NO_VALUE>")) {
 					writer.write("=\"");
-					encode(writer, entry.getValue());
+					writer.write(encode(entry.getValue()));
 					writer.write('"');
+				}
+			}
+		}
+	}
+
+	public static void ansiAttributes(AnsiComponent component, @Nullable Map<String, String> attributes, int depth) {
+		int col = ANSI_COLORS[depth % ANSI_COLORS.length];
+
+		if (attributes != null) {
+			for (var entry : attributes.entrySet()) {
+				component.append(' ');
+				component.append(Ansi.lime(entry.getKey()));
+
+				if (!entry.getValue().equals("<NO_VALUE>")) {
+					component.append(Ansi.of("=\"").color(col));
+					component.append(Ansi.yellow(encode(entry.getValue())));
+					component.append(Ansi.of("\"").color(col));
 				}
 			}
 		}

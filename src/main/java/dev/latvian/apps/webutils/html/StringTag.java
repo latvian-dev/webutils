@@ -1,5 +1,7 @@
 package dev.latvian.apps.webutils.html;
 
+import dev.latvian.apps.webutils.ansi.AnsiComponent;
+
 import java.io.Writer;
 
 public class StringTag extends Tag {
@@ -30,6 +32,11 @@ public class StringTag extends Tag {
 
 	@Override
 	public void write(Writer writer) throws Throwable {
-		TagUtils.encode(writer, string);
+		writer.write(getRawContent());
+	}
+
+	@Override
+	public void ansi(AnsiComponent component, int depth) {
+		component.append(getRawContent());
 	}
 }

@@ -1,10 +1,10 @@
 package dev.latvian.apps.webutils.html;
 
 import dev.latvian.apps.webutils.ansi.Ansi;
+import dev.latvian.apps.webutils.ansi.AnsiComponent;
 import dev.latvian.apps.webutils.net.Response;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.StringWriter;
@@ -54,12 +54,10 @@ public abstract class Tag implements TagConvertible {
 		return this;
 	}
 
-	@ApiStatus.Internal
 	public Tag attr(String key, Object value) {
 		throw new IllegalStateException("This tag type does not support attributes");
 	}
 
-	@ApiStatus.Internal
 	public Tag attr(String key) {
 		return attr(key, "<NO_VALUE>");
 	}
@@ -98,6 +96,8 @@ public abstract class Tag implements TagConvertible {
 
 	public abstract void write(Writer writer) throws Throwable;
 
+	public abstract void ansi(AnsiComponent component, int depth);
+
 	@Override
 	public String toString() {
 		var writer = new StringWriter();
@@ -112,6 +112,12 @@ public abstract class Tag implements TagConvertible {
 		}
 
 		return writer.toString();
+	}
+
+	public AnsiComponent toAnsi() {
+		var component = Ansi.of();
+		ansi(component, 0);
+		return component;
 	}
 
 	public void result(Context ctx) {
@@ -158,14 +164,12 @@ public abstract class Tag implements TagConvertible {
 		return add(new RawTag(String.valueOf(string)));
 	}
 
-	@ApiStatus.Internal
 	public UnpairedTag unpaired(String name) {
 		var tag = new UnpairedTag(name);
 		add(tag);
 		return tag;
 	}
 
-	@ApiStatus.Internal
 	public PairedTag paired(String name) {
 		var tag = new PairedTag(name);
 		add(tag);
@@ -343,6 +347,29 @@ public abstract class Tag implements TagConvertible {
 		return paired("h3");
 	}
 
+	public Tag h4() {
+		return paired("h4");
+	}
+
+	public Tag h5() {
+		return paired("h5");
+	}
+
+	public Tag h6() {
+		return paired("h6");
+	}
+
+	public Tag heading(int heading) {
+		return switch (heading) {
+			case 1 -> h1();
+			case 2 -> h2();
+			case 3 -> h3();
+			case 4 -> h4();
+			case 5 -> h5();
+			default -> heading <= 0 ? this : h6();
+		};
+	}
+
 	public Tag ol() {
 		return paired("ol");
 	}
@@ -432,6 +459,10 @@ public abstract class Tag implements TagConvertible {
 
 	public Tag iframe(String name) {
 		return paired("iframe").attr("name", name);
+	}
+
+	public Tag pre() {
+		return paired("pre");
 	}
 
 	// Form

@@ -1,5 +1,8 @@
 package dev.latvian.apps.webutils.html;
 
+import dev.latvian.apps.webutils.ansi.Ansi;
+import dev.latvian.apps.webutils.ansi.AnsiComponent;
+
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -134,6 +137,27 @@ public class PairedTag extends UnpairedTag {
 			writer.write("</");
 			writer.write(this.name);
 			writer.write('>');
+		}
+	}
+
+	@Override
+	public void ansi(AnsiComponent component, int depth) {
+		int col = TagUtils.ANSI_COLORS[depth % TagUtils.ANSI_COLORS.length];
+
+		if (!this.name.isEmpty()) {
+			component.append(Ansi.of("<" + this.name).color(col));
+			TagUtils.ansiAttributes(component, this.attributes, depth);
+			component.append(Ansi.of(">").color(col));
+		}
+
+		if (this.content != null && !this.content.isEmpty()) {
+			for (var tag : this.content) {
+				tag.ansi(component, depth + 1);
+			}
+		}
+
+		if (!this.name.isEmpty()) {
+			component.append(Ansi.of("</" + this.name + ">").color(col));
 		}
 	}
 }

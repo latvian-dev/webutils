@@ -1,6 +1,7 @@
 package dev.latvian.apps.webutils.html;
 
-import org.jetbrains.annotations.ApiStatus;
+import dev.latvian.apps.webutils.ansi.Ansi;
+import dev.latvian.apps.webutils.ansi.AnsiComponent;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Writer;
@@ -17,7 +18,6 @@ public class UnpairedTag extends Tag {
 	}
 
 	@Override
-	@ApiStatus.Internal
 	public Tag attr(String key, Object value) {
 		if (key.isEmpty()) {
 			return this;
@@ -43,5 +43,14 @@ public class UnpairedTag extends Tag {
 		writer.write(this.name);
 		TagUtils.writeAttributes(writer, this.attributes);
 		writer.write(" />");
+	}
+
+	@Override
+	public void ansi(AnsiComponent component, int depth) {
+		int col = TagUtils.ANSI_COLORS[depth % TagUtils.ANSI_COLORS.length];
+
+		component.append(Ansi.of("<" + this.name).color(col));
+		TagUtils.ansiAttributes(component, this.attributes, depth);
+		component.append(Ansi.of(" />").color(col));
 	}
 }

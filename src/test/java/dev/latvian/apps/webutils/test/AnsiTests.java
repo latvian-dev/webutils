@@ -1,6 +1,7 @@
 package dev.latvian.apps.webutils.test;
 
 import dev.latvian.apps.webutils.ansi.Ansi;
+import dev.latvian.apps.webutils.html.PairedTag;
 import org.junit.jupiter.api.Test;
 
 public class AnsiTests {
@@ -13,5 +14,14 @@ public class AnsiTests {
 		System.out.println();
 
 		Ansi.log("! Hello");
+	}
+
+	@Test
+	public void html() {
+		var section = new PairedTag("section");
+		section.classes("test test-2");
+		section.img("img.png");
+		section.p().string("Hello!").p().raw("abc");
+		Ansi.log(section.toAnsi());
 	}
 }
