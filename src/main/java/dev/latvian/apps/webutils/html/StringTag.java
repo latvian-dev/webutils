@@ -36,7 +36,7 @@ public class StringTag extends Tag {
 	}
 
 	@Override
-	public void ansi(AnsiComponent component, int depth) {
+	public void ansi(AnsiComponent component, int depth, int indent) {
 		component.append(getRawContent());
 	}
 }

@@ -96,7 +96,7 @@ public abstract class Tag implements TagConvertible {
 
 	public abstract void write(Writer writer) throws Throwable;
 
-	public abstract void ansi(AnsiComponent component, int depth);
+	public abstract void ansi(AnsiComponent component, int depth, int indent);
 
 	@Override
 	public String toString() {
@@ -114,9 +114,9 @@ public abstract class Tag implements TagConvertible {
 		return writer.toString();
 	}
 
-	public AnsiComponent toAnsi() {
+	public AnsiComponent toAnsi(boolean indent) {
 		var component = Ansi.of();
-		ansi(component, 0);
+		ansi(component, 0, indent ? 0 : -1);
 		return component;
 	}
 

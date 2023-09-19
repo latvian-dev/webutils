@@ -46,7 +46,7 @@ public class UnpairedTag extends Tag {
 	}
 
 	@Override
-	public void ansi(AnsiComponent component, int depth) {
+	public void ansi(AnsiComponent component, int depth, int indent) {
 		int col = TagUtils.ANSI_COLORS[depth % TagUtils.ANSI_COLORS.length];
 
 		component.append(Ansi.of("<" + this.name).color(col));

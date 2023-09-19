@@ -21,7 +21,7 @@ public class AnsiTests {
 		var section = new PairedTag("section");
 		section.classes("test test-2");
 		section.img("img.png");
-		section.p().string("Hello!").p().raw("abc");
-		Ansi.log(section.toAnsi());
+		section.p().string("Hello!").p().raw("abc").spanstr("yo").raw("test");
+		Ansi.log("Tag:\n" + section.toAnsi(true));
 	}
 }

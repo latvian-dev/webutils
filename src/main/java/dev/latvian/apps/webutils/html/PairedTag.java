@@ -141,7 +141,7 @@ public class PairedTag extends UnpairedTag {
 	}
 
 	@Override
-	public void ansi(AnsiComponent component, int depth) {
+	public void ansi(AnsiComponent component, int depth, int indent) {
 		int col = TagUtils.ANSI_COLORS[depth % TagUtils.ANSI_COLORS.length];
 
 		if (!this.name.isEmpty()) {
@@ -150,10 +150,36 @@ public class PairedTag extends UnpairedTag {
 			component.append(Ansi.of(">").color(col));
 		}
 
+		boolean shouldIndent = indent >= 0 && !this.name.isEmpty();
+
+		if (shouldIndent) {
+			shouldIndent = false;
+
+			if (this.content != null && !this.content.isEmpty()) {
+				for (var tag : this.content) {
+					if (tag instanceof UnpairedTag) {
+						shouldIndent = true;
+						break;
+					}
+				}
+			}
+		}
+
 		if (this.content != null && !this.content.isEmpty()) {
 			for (var tag : this.content) {
-				tag.ansi(component, depth + 1);
+				if (shouldIndent) {
+					component.append('\n');
+					component.append("  ".repeat(indent + 1));
+					tag.ansi(component, depth + 1, indent + 1);
+				} else {
+					tag.ansi(component, depth + 1, indent);
+				}
 			}
+		}
+
+		if (shouldIndent) {
+			component.append('\n');
+			component.append("  ".repeat(indent));
 		}
 
 		if (!this.name.isEmpty()) {
