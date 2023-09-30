@@ -2,6 +2,7 @@ package dev.latvian.apps.webutils.html;
 
 import dev.latvian.apps.webutils.ansi.Ansi;
 import dev.latvian.apps.webutils.ansi.AnsiComponent;
+import dev.latvian.apps.webutils.data.Lazy;
 import dev.latvian.apps.webutils.net.Response;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
@@ -42,6 +43,11 @@ public abstract class Tag implements TagConvertible {
 	}
 
 	public Tag add(Tag tag) {
+		addAnd(tag);
+		return this;
+	}
+
+	public Tag addAnd(Tag tag) {
 		throw new IllegalStateException("This tag type does not support children tags");
 	}
 
@@ -143,25 +149,24 @@ public abstract class Tag implements TagConvertible {
 	}
 
 	public Tag space(int space) {
-		if (space <= 0) {
-			return this;
-		} else if (space == 1) {
-			return raw(" ");
-		} else {
-			return raw("&nbsp;".repeat(space));
-		}
+		return switch (space) {
+			case 1 -> raw("&nbsp;");
+			case 2 -> raw("&nbsp;&nbsp;");
+			case 3 -> raw("&nbsp;&nbsp;&nbsp;");
+			default -> space <= 0 ? this : raw("&nbsp;".repeat(space));
+		};
 	}
 
 	public Tag space() {
 		return space(1);
 	}
 
-	public Tag nbsp() {
-		return raw("&nbsp;");
-	}
-
 	public Tag raw(Object string) {
 		return add(new RawTag(String.valueOf(string)));
+	}
+
+	public Tag lazyRaw(Lazy<String> string) {
+		return add(new LazyRawTag(string));
 	}
 
 	public UnpairedTag unpaired(String name) {
@@ -457,12 +462,68 @@ public abstract class Tag implements TagConvertible {
 		return paired("option").attr("value", value);
 	}
 
+	public Tag iframe() {
+		return paired("iframe");
+	}
+
 	public Tag iframe(String name) {
-		return paired("iframe").attr("name", name);
+		return iframe().attr("name", name);
+	}
+
+	public Tag styleTag() {
+		return paired("style");
 	}
 
 	public Tag pre() {
 		return paired("pre");
+	}
+
+	public Tag svg() {
+		return paired("svg");
+	}
+
+	public Tag svg(Lazy<String> svg) {
+		return paired("svg").lazyRaw(svg);
+	}
+
+	public Tag i() {
+		return paired("i");
+	}
+
+	public Tag em() {
+		return paired("em");
+	}
+
+	public Tag mark() {
+		return paired("mark");
+	}
+
+	public Tag b() {
+		return paired("b");
+	}
+
+	public Tag strong() {
+		return paired("strong");
+	}
+
+	public Tag s() {
+		return paired("s");
+	}
+
+	public Tag small() {
+		return paired("small");
+	}
+
+	public Tag sub() {
+		return paired("sub");
+	}
+
+	public Tag sup() {
+		return paired("sup");
+	}
+
+	public Tag u() {
+		return paired("u");
 	}
 
 	// Form
@@ -507,5 +568,9 @@ public abstract class Tag implements TagConvertible {
 		}
 
 		return t;
+	}
+
+	public Tag button() {
+		return paired("button");
 	}
 }

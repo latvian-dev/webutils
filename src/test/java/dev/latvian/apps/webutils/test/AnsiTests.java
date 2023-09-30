@@ -7,10 +7,15 @@ import org.junit.jupiter.api.Test;
 public class AnsiTests {
 	@Test
 	public void components() {
-		var c = Ansi.of().append(Ansi.red("This text is red ").append(Ansi.of("this text is pink ").color(225).append(Ansi.of("error").white().redBg())).append(" this text should be red")).append(" and this should be reset");
-		System.out.println(c);
+		var c = Ansi.of();
+		c.append("GET 200 ");
+		c.append(Ansi.cyan("Test"));
+		c.append(" /test");
+		var c1 = Ansi.of("WEB ").green().append(c);
+
+		System.out.println(c1);
 		System.out.println();
-		System.out.println(c.toDebugString());
+		System.out.println(c1.toDebugString());
 		System.out.println();
 
 		Ansi.log("! Hello");

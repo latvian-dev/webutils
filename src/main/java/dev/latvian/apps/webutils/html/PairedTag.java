@@ -19,7 +19,7 @@ public class PairedTag extends UnpairedTag {
 	}
 
 	@Override
-	public Tag add(Tag content) {
+	public Tag addAnd(Tag content) {
 		if (content instanceof PairedTag t && t.content != null && t.name.isEmpty()) {
 			if (t.attributes != null) {
 				if (this.attributes == null) {
@@ -42,7 +42,7 @@ public class PairedTag extends UnpairedTag {
 
 		content.parent = this;
 		this.content.add(content);
-		return this;
+		return content;
 	}
 
 	@Override
