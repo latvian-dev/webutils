@@ -10,10 +10,20 @@ import java.util.Map;
 public class UnpairedTag implements Tag {
 	public final String name;
 	protected Map<String, String> attributes;
+	public Tag parent;
 
 	public UnpairedTag(String name) {
 		this.name = name;
 		this.attributes = null;
+	}
+
+	@Override
+	public Tag end() {
+		if (parent == null) {
+			throw new IllegalStateException("This tag does not have a parent tag");
+		}
+
+		return parent;
 	}
 
 	@Override

@@ -2,7 +2,6 @@ package dev.latvian.apps.webutils.html;
 
 import dev.latvian.apps.webutils.ansi.Ansi;
 import dev.latvian.apps.webutils.ansi.AnsiComponent;
-import dev.latvian.apps.webutils.data.Lazy;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
@@ -18,6 +17,10 @@ public interface Tag extends TagConvertible {
 
 	default Tag copy() {
 		return this;
+	}
+
+	default Tag end() {
+		throw new IllegalStateException("This tag type does not support end()");
 	}
 
 	void append(StringBuilder builder, boolean header);
@@ -145,18 +148,16 @@ public interface Tag extends TagConvertible {
 		return str.isEmpty() ? this : add(new RawTag(str));
 	}
 
-	default Tag lazy(Lazy<? extends TagConvertible> lazy) {
-		return add(new LazyTagConvertible(lazy));
-	}
-
 	default UnpairedTag unpaired(String name) {
 		var tag = new UnpairedTag(name);
+		tag.parent = this;
 		add(tag);
 		return tag;
 	}
 
 	default PairedTag paired(String name) {
 		var tag = new PairedTag(name);
+		tag.parent = this;
 		add(tag);
 		return tag;
 	}
@@ -498,6 +499,22 @@ public interface Tag extends TagConvertible {
 
 	default Tag u() {
 		return paired("u");
+	}
+
+	default Tag svg(PairedTag xml) {
+		var svg = paired("svg");
+		svg.attr("xmlns", "http://www.w3.org/2000/svg");
+		svg.attr("fill", "currentcolor");
+
+		if (xml.attributes != null) {
+			svg.attributes.putAll(xml.attributes);
+		}
+
+		for (var tag : xml.content) {
+			svg.add(tag);
+		}
+
+		return svg;
 	}
 
 	// Form
