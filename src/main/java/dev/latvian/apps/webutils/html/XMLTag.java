@@ -17,6 +17,11 @@ public class XMLTag extends PairedTag implements ResponseTag {
 	}
 
 	@Override
+	protected XMLTag copy0() {
+		return new XMLTag(name);
+	}
+
+	@Override
 	public String getMimeType() {
 		return MimeType.XML_TEXT;
 	}

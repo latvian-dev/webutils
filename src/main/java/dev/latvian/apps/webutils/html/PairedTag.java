@@ -5,6 +5,7 @@ import dev.latvian.apps.webutils.ansi.AnsiComponent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
@@ -99,6 +100,27 @@ public class PairedTag extends UnpairedTag {
 				}
 			}
 		}
+	}
+
+	@Override
+	public PairedTag copy() {
+		var tag = copy0();
+		tag.attributes = attributes == null ? null : new LinkedHashMap<>(attributes);
+
+		if (content != null) {
+			tag.content = new ArrayList<>(content.size());
+
+			for (var t : content) {
+				tag.content.add(t.copy());
+			}
+		}
+
+		return tag;
+	}
+
+	@Override
+	protected PairedTag copy0() {
+		return new PairedTag(name);
 	}
 
 	@Override

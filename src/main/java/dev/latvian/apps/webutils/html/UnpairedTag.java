@@ -37,6 +37,17 @@ public class UnpairedTag implements Tag {
 	}
 
 	@Override
+	public UnpairedTag copy() {
+		var tag = copy0();
+		tag.attributes = attributes == null ? null : new LinkedHashMap<>(attributes);
+		return tag;
+	}
+
+	protected UnpairedTag copy0() {
+		return new UnpairedTag(name);
+	}
+
+	@Override
 	public void append(StringBuilder builder, boolean header) {
 		builder.append('<');
 		builder.append(this.name);

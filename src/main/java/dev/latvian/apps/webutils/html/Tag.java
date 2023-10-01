@@ -16,6 +16,10 @@ public interface Tag extends TagConvertible {
 		parent.add(this);
 	}
 
+	default Tag copy() {
+		return this;
+	}
+
 	void append(StringBuilder builder, boolean header);
 
 	void appendRaw(StringBuilder builder);
@@ -119,7 +123,8 @@ public interface Tag extends TagConvertible {
 	}
 
 	default Tag string(Object string) {
-		return add(new StringTag(String.valueOf(string)));
+		var str = String.valueOf(string);
+		return str.isEmpty() ? this : add(new StringTag(str));
 	}
 
 	default Tag space(int space) {
@@ -136,7 +141,8 @@ public interface Tag extends TagConvertible {
 	}
 
 	default Tag raw(Object string) {
-		return add(new RawTag(String.valueOf(string)));
+		var str = String.valueOf(string);
+		return str.isEmpty() ? this : add(new RawTag(str));
 	}
 
 	default Tag lazy(Lazy<? extends TagConvertible> lazy) {

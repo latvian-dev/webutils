@@ -75,6 +75,11 @@ public class RootTag extends PairedTag implements ResponseTag {
 	}
 
 	@Override
+	protected RootTag copy0() {
+		throw new IllegalStateException("Can't copy root tag");
+	}
+
+	@Override
 	public void append(StringBuilder builder, boolean header) {
 		if (header) {
 			builder.append("<!DOCTYPE html>");
