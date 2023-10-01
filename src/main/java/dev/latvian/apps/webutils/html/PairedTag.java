@@ -3,7 +3,6 @@ package dev.latvian.apps.webutils.html;
 import dev.latvian.apps.webutils.ansi.Ansi;
 import dev.latvian.apps.webutils.ansi.AnsiComponent;
 
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +39,6 @@ public class PairedTag extends UnpairedTag {
 			this.content = new ArrayList<>();
 		}
 
-		content.parent = this;
 		this.content.add(content);
 		return content;
 	}
@@ -52,21 +50,6 @@ public class PairedTag extends UnpairedTag {
 		}
 
 		return content.get(index);
-	}
-
-	@Override
-	public String getRawContent() {
-		if (content != null && !content.isEmpty()) {
-			var builder = new StringBuilder();
-
-			for (var tag : content) {
-				builder.append(tag.getRawContent());
-			}
-
-			return builder.toString();
-		}
-
-		return "";
 	}
 
 	@Override
@@ -119,24 +102,33 @@ public class PairedTag extends UnpairedTag {
 	}
 
 	@Override
-	public void write(Writer writer) throws Throwable {
+	public void append(StringBuilder builder, boolean header) {
 		if (!this.name.isEmpty()) {
-			writer.write('<');
-			writer.write(this.name);
-			TagUtils.writeAttributes(writer, this.attributes);
-			writer.write('>');
+			builder.append('<');
+			builder.append(this.name);
+			TagUtils.writeAttributes(builder, this.attributes);
+			builder.append('>');
 		}
 
 		if (this.content != null && !this.content.isEmpty()) {
 			for (var tag : this.content) {
-				tag.write(writer);
+				tag.append(builder, header);
 			}
 		}
 
 		if (!this.name.isEmpty()) {
-			writer.write("</");
-			writer.write(this.name);
-			writer.write('>');
+			builder.append("</");
+			builder.append(this.name);
+			builder.append('>');
+		}
+	}
+
+	@Override
+	public void appendRaw(StringBuilder builder) {
+		if (content != null && !content.isEmpty()) {
+			for (var tag : content) {
+				tag.appendRaw(builder);
+			}
 		}
 	}
 

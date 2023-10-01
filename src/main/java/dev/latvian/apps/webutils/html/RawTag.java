@@ -6,8 +6,23 @@ public class RawTag extends StringTag {
 	}
 
 	@Override
-	public String getRawContent() {
+	public String toRawString() {
 		return string;
+	}
+
+	@Override
+	public String toTagString(boolean header) {
+		return string;
+	}
+
+	@Override
+	public void append(StringBuilder builder, boolean header) {
+		builder.append(string);
+	}
+
+	@Override
+	public void appendRaw(StringBuilder builder) {
+		builder.append(string);
 	}
 
 	@Override

@@ -4,11 +4,10 @@ import dev.latvian.apps.webutils.ansi.Ansi;
 import dev.latvian.apps.webutils.ansi.AnsiComponent;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.Writer;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class UnpairedTag extends Tag {
+public class UnpairedTag implements Tag {
 	public final String name;
 	protected Map<String, String> attributes;
 
@@ -38,11 +37,15 @@ public class UnpairedTag extends Tag {
 	}
 
 	@Override
-	public void write(Writer writer) throws Throwable {
-		writer.write('<');
-		writer.write(this.name);
-		TagUtils.writeAttributes(writer, this.attributes);
-		writer.write(" />");
+	public void append(StringBuilder builder, boolean header) {
+		builder.append('<');
+		builder.append(this.name);
+		TagUtils.writeAttributes(builder, this.attributes);
+		builder.append(" />");
+	}
+
+	@Override
+	public void appendRaw(StringBuilder builder) {
 	}
 
 	@Override

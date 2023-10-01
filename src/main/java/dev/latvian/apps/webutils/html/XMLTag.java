@@ -1,30 +1,23 @@
 package dev.latvian.apps.webutils.html;
 
-import dev.latvian.apps.webutils.net.FileResponse;
-import dev.latvian.apps.webutils.net.Response;
-import io.javalin.http.HttpStatus;
+import dev.latvian.apps.webutils.net.MimeType;
 
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
-
-public class XMLTag extends PairedTag {
+public class XMLTag extends PairedTag implements ResponseTag {
 	public XMLTag(String tag) {
 		super(tag);
 	}
 
 	@Override
-	public Tag getRoot() {
-		return this;
+	public void append(StringBuilder builder, boolean header) {
+		if (header) {
+			builder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		}
+
+		super.append(builder, header);
 	}
 
 	@Override
-	public void write(Writer writer) throws Throwable {
-		writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		super.write(writer);
-	}
-
-	@Override
-	public Response asResponse(HttpStatus status) {
-		return FileResponse.of(status, "text/xml; charset=utf-8", toString().getBytes(StandardCharsets.UTF_8));
+	public String getMimeType() {
+		return MimeType.XML_TEXT;
 	}
 }

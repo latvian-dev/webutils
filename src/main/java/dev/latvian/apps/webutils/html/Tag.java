@@ -3,77 +3,95 @@ package dev.latvian.apps.webutils.html;
 import dev.latvian.apps.webutils.ansi.Ansi;
 import dev.latvian.apps.webutils.ansi.AnsiComponent;
 import dev.latvian.apps.webutils.data.Lazy;
-import dev.latvian.apps.webutils.net.Response;
-import io.javalin.http.Context;
-import io.javalin.http.HttpStatus;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.StringWriter;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class Tag implements TagConvertible {
-	public Tag parent = null;
-
-	public Tag end() {
-		return parent;
-	}
-
-	public Tag getRoot() {
-		var p = this;
-
-		while (p.parent != null) {
-			p = p.parent;
-		}
-
-		return p;
-	}
-
+public interface Tag extends TagConvertible {
 	@Override
-	public final void appendHTMLTag(Tag parent) {
+	default void appendHTMLTag(Tag parent) {
 		parent.add(this);
 	}
 
-	public String getRawContent() {
-		return "";
+	void append(StringBuilder builder, boolean header);
+
+	void appendRaw(StringBuilder builder);
+
+	default void ansi(AnsiComponent component, int depth, int indent) {
+		component.append(toRawString());
 	}
 
-	public Tag add(Tag tag) {
+	default String toRawString() {
+		var builder = new StringBuilder();
+
+		try {
+			appendRaw(builder);
+		} catch (OutOfMemoryError error) {
+			Ansi.log("! Out of memory while generating HTML:");
+			error.printStackTrace();
+		} catch (Throwable error) {
+			error.printStackTrace();
+		}
+
+		return builder.toString();
+	}
+
+	default String toTagString(boolean header) {
+		var builder = new StringBuilder();
+
+		try {
+			append(builder, header);
+		} catch (OutOfMemoryError error) {
+			Ansi.log("! Out of memory while generating HTML:");
+			error.printStackTrace();
+		} catch (Throwable error) {
+			error.printStackTrace();
+		}
+
+		return builder.toString();
+	}
+
+	default AnsiComponent toAnsi(boolean indent) {
+		var component = Ansi.of();
+		ansi(component, 0, indent ? 0 : -1);
+		return component;
+	}
+
+	default Tag add(Tag tag) {
 		addAnd(tag);
 		return this;
 	}
 
-	public Tag addAnd(Tag tag) {
+	default Tag addAnd(Tag tag) {
 		throw new IllegalStateException("This tag type does not support children tags");
 	}
 
-	public Tag getChild(int index) {
+	default Tag getChild(int index) {
 		throw new IllegalStateException("This tag type does not support children tags");
 	}
 
-	public final Tag add(TagConvertible tag) {
+	default Tag add(TagConvertible tag) {
 		tag.appendHTMLTag(this);
 		return this;
 	}
 
-	public Tag attr(String key, Object value) {
+	default Tag attr(String key, Object value) {
 		throw new IllegalStateException("This tag type does not support attributes");
 	}
 
-	public Tag attr(String key) {
+	default Tag attr(String key) {
 		return attr(key, "<NO_VALUE>");
 	}
 
 	@Nullable
-	public String getAttr(String key) {
+	default String getAttr(String key) {
 		throw new IllegalStateException("This tag type does not support attributes");
 	}
 
-	public Tag classes(String classes) {
+	default Tag classes(String classes) {
 		var attr = getAttr("class");
 
 		if (classes.isBlank()) {
@@ -89,66 +107,22 @@ public abstract class Tag implements TagConvertible {
 		return this;
 	}
 
-	public boolean isEmpty() {
-		return true;
+	default boolean isEmpty() {
+		return false;
 	}
 
-	public boolean isEmptyRecursively() {
-		return true;
+	default boolean isEmptyRecursively() {
+		return isEmpty();
 	}
 
-	public void replace(Pattern pattern, BiConsumer<Tag, Matcher> replace) {
+	default void replace(Pattern pattern, BiConsumer<Tag, Matcher> replace) {
 	}
 
-	public abstract void write(Writer writer) throws Throwable;
-
-	public abstract void ansi(AnsiComponent component, int depth, int indent);
-
-	@Override
-	public String toString() {
-		var writer = new StringWriter();
-
-		try {
-			write(writer);
-		} catch (OutOfMemoryError error) {
-			Ansi.log("! Out of memory while generating HTML:");
-			error.printStackTrace();
-		} catch (Throwable error) {
-			error.printStackTrace();
-		}
-
-		return writer.toString();
-	}
-
-	public AnsiComponent toAnsi(boolean indent) {
-		var component = Ansi.of();
-		ansi(component, 0, indent ? 0 : -1);
-		return component;
-	}
-
-	public void result(Context ctx) {
-		result(ctx, HttpStatus.OK);
-	}
-
-	public void result(Context ctx, HttpStatus status) {
-		ctx.status(status);
-		ctx.contentType("text/html; charset=utf-8");
-		ctx.result(getRoot().toString().getBytes(StandardCharsets.UTF_8));
-	}
-
-	public Response asResponse() {
-		return asResponse(HttpStatus.OK);
-	}
-
-	public Response asResponse(HttpStatus status) {
-		return getRoot().asResponse(status);
-	}
-
-	public Tag string(Object string) {
+	default Tag string(Object string) {
 		return add(new StringTag(String.valueOf(string)));
 	}
 
-	public Tag space(int space) {
+	default Tag space(int space) {
 		return switch (space) {
 			case 1 -> raw("&nbsp;");
 			case 2 -> raw("&nbsp;&nbsp;");
@@ -157,25 +131,25 @@ public abstract class Tag implements TagConvertible {
 		};
 	}
 
-	public Tag space() {
+	default Tag space() {
 		return space(1);
 	}
 
-	public Tag raw(Object string) {
+	default Tag raw(Object string) {
 		return add(new RawTag(String.valueOf(string)));
 	}
 
-	public Tag lazyRaw(Lazy<String> string) {
-		return add(new LazyRawTag(string));
+	default Tag lazy(Lazy<? extends TagConvertible> lazy) {
+		return add(new LazyTagConvertible(lazy));
 	}
 
-	public UnpairedTag unpaired(String name) {
+	default UnpairedTag unpaired(String name) {
 		var tag = new UnpairedTag(name);
 		add(tag);
 		return tag;
 	}
 
-	public PairedTag paired(String name) {
+	default PairedTag paired(String name) {
 		var tag = new PairedTag(name);
 		add(tag);
 		return tag;
@@ -183,31 +157,31 @@ public abstract class Tag implements TagConvertible {
 
 	// Attributes
 
-	public Tag id(String id) {
+	default Tag id(String id) {
 		return attr("id", id);
 	}
 
-	public Tag title(String title) {
+	default Tag title(String title) {
 		return title.isEmpty() ? this : attr("title", title);
 	}
 
-	public Tag confirm(String s) {
+	default Tag confirm(String s) {
 		return attr("onclick", "return confirm('" + s + "')");
 	}
 
-	public Tag href(String href) {
+	default Tag href(String href) {
 		return href.isEmpty() ? this : attr("href", href);
 	}
 
-	public Tag style(String style) {
+	default Tag style(String style) {
 		return attr("style", style);
 	}
 
-	public Tag value(String value) {
+	default Tag value(String value) {
 		return attr("value", value);
 	}
 
-	public Tag value(String value, String min, String max, String step) {
+	default Tag value(String value, String min, String max, String step) {
 		var t = attr("value", value).attr("min", min).attr("max", max);
 
 		if (!step.isEmpty()) {
@@ -217,58 +191,58 @@ public abstract class Tag implements TagConvertible {
 		return t;
 	}
 
-	public Tag pattern(String value) {
+	default Tag pattern(String value) {
 		return attr("pattern", value);
 	}
 
-	public Tag required() {
+	default Tag required() {
 		return attr("required");
 	}
 
-	public Tag lazyLoading() {
+	default Tag lazyLoading() {
 		return attr("loading", "lazy");
 	}
 
-	public Tag target(String target) {
+	default Tag target(String target) {
 		return attr("target", target);
 	}
 
 	// Unpaired
 
-	public Tag meta(String key, Object value) {
+	default Tag meta(String key, Object value) {
 		return unpaired("meta").attr(key, value);
 	}
 
-	public Tag meta(String key1, Object value1, String key2, Object value2) {
+	default Tag meta(String key1, Object value1, String key2, Object value2) {
 		return meta(key1, value1).attr(key2, value2);
 	}
 
-	public Tag link(String key, Object value) {
+	default Tag link(String key, Object value) {
 		return unpaired("link").attr(key, value);
 	}
 
-	public Tag link(String key1, Object value1, String key2, Object value2) {
+	default Tag link(String key1, Object value1, String key2, Object value2) {
 		return link(key1, value1).attr(key2, value2);
 	}
 
-	public Tag stylesheet(String path) {
+	default Tag stylesheet(String path) {
 		return link("rel", "stylesheet", "href", path);
 	}
 
-	public Tag br() {
+	default Tag br() {
 		unpaired("br");
 		return this;
 	}
 
-	public Tag hr() {
+	default Tag hr() {
 		return unpaired("hr");
 	}
 
-	public Tag img(String src) {
+	default Tag img(String src) {
 		return unpaired("img").attr("src", src);
 	}
 
-	public Tag video(String src, boolean controls) {
+	default Tag video(String src, boolean controls) {
 		var tag = unpaired("video").attr("src", src).attr("preload", "metadata");
 
 		if (controls) {
@@ -280,91 +254,92 @@ public abstract class Tag implements TagConvertible {
 
 	// Paired
 
-	public Tag titleTag() {
+	default Tag titleTag() {
 		return paired("title");
 	}
 
-	public Tag div() {
+	default Tag div() {
 		return paired("div");
 	}
 
-	public Tag div(String classes) {
+	default Tag div(String classes) {
 		return div().classes(classes);
 	}
 
-	public Tag main() {
+	default Tag main() {
 		return paired("main");
 	}
 
-	public Tag nav() {
+	default Tag nav() {
 		return paired("nav");
 	}
 
-	public Tag section() {
+	default Tag section() {
 		return paired("section");
 	}
 
-	public Tag section(String id) {
+	default Tag section(String id) {
 		return section().id(id);
 	}
 
-	public Tag article() {
+	default Tag article() {
 		return paired("article");
 	}
 
-	public Tag header() {
+	default Tag header() {
 		return paired("header");
 	}
 
-	public Tag footer() {
+	default Tag footer() {
 		return paired("footer");
 	}
 
-	public Tag span() {
+	default Tag span() {
 		return paired("span");
 	}
 
-	public Tag span(String classes) {
+	default Tag span(String classes) {
 		return span().classes(classes);
 	}
 
-	public Tag span(String classes, Object string) {
+	default Tag span(String classes, Object string) {
 		return span(classes).string(string);
 	}
 
-	public Tag spanstr(Object string) {
-		return span().string(string).end();
+	default Tag spanstr(Object string) {
+		span().string(string);
+		return this;
 	}
 
-	public Tag p() {
+	default Tag p() {
 		return paired("p");
 	}
 
-	public Tag h1() {
+	default Tag h1() {
 		return paired("h1");
 	}
 
-	public Tag h2() {
+	default Tag h2() {
 		return paired("h2");
 	}
 
-	public Tag h3() {
+	default Tag h3() {
 		return paired("h3");
 	}
 
-	public Tag h4() {
+	default Tag h4() {
 		return paired("h4");
 	}
 
-	public Tag h5() {
+	default Tag h5() {
 		return paired("h5");
 	}
 
-	public Tag h6() {
+	default Tag h6() {
 		return paired("h6");
 	}
 
-	public Tag heading(int heading) {
+	default Tag heading(int heading) {
 		return switch (heading) {
 			case 1 -> h1();
 			case 2 -> h2();
@@ -375,192 +350,185 @@ public abstract class Tag implements TagConvertible {
 		};
 	}
 
-	public Tag ol() {
+	default Tag ol() {
 		return paired("ol");
 	}
 
-	public Tag ul() {
+	default Tag ul() {
 		return paired("ul");
 	}
 
-	public Tag li() {
+	default Tag li() {
 		return paired("li");
 	}
 
-	public Tag a(String url) {
+	default Tag a(String url) {
 		return paired("a").href(url);
 	}
 
-	public Tag a(String url, Object string) {
+	default Tag a(String url, Object string) {
 		return a(url).string(string);
 	}
 
-	public Tag aClick(String click) {
+	default Tag aClick(String click) {
 		return a("#").attr("onclick", click);
 	}
 
-	public Tag time(Instant instant) {
+	default Tag time(Instant instant) {
 		return paired("time").attr("datetime", instant.toString());
 	}
 
-	public Tag table() {
+	default Tag table() {
 		return paired("table");
 	}
 
-	public Tag thead() {
+	default Tag thead() {
 		return paired("thead");
 	}
 
-	public Tag tbody() {
+	default Tag tbody() {
 		return paired("tbody");
 	}
 
-	public Tag tr() {
+	default Tag tr() {
 		return paired("tr");
 	}
 
-	public Tag th() {
+	default Tag th() {
 		return paired("th");
 	}
 
-	public Tag td() {
+	default Tag td() {
 		return paired("td");
 	}
 
-	public Tag code() {
+	default Tag code() {
 		return paired("code");
 	}
 
-	public Tag code(Object string) {
-		return code().string(string).end();
+	default Tag codestr(Object string) {
+		code().string(string);
+		return this;
 	}
 
-	public Tag script(String src) {
+	default Tag script(String src) {
 		return paired("script").attr("src", src);
 	}
 
-	public Tag deferScript(String src) {
+	default Tag deferScript(String src) {
 		return script(src).attr("defer");
 	}
 
-	public Tag asyncScript(String src) {
+	default Tag asyncScript(String src) {
 		return script(src).attr("async");
 	}
 
-	public FormTag form(String method) {
+	default FormTag form(String method) {
 		var form = new FormTag();
 		form.attr("method", method);
 		add(form);
 		return form;
 	}
 
-	public FormTag form(String method, String action) {
+	default FormTag form(String method, String action) {
 		return (FormTag) form(method).attr("action", action);
 	}
 
-	public Tag option(String value) {
+	default Tag option(String value) {
 		return paired("option").attr("value", value);
 	}
 
-	public Tag iframe() {
+	default Tag iframe() {
 		return paired("iframe");
 	}
 
-	public Tag iframe(String name) {
+	default Tag iframe(String name) {
 		return iframe().attr("name", name);
 	}
 
-	public Tag styleTag() {
+	default Tag styleTag() {
 		return paired("style");
 	}
 
-	public Tag pre() {
+	default Tag pre() {
 		return paired("pre");
 	}
 
-	public Tag svg() {
-		return paired("svg");
-	}
-
-	public Tag svg(Lazy<String> svg) {
-		return paired("svg").lazyRaw(svg);
-	}
-
-	public Tag i() {
+	default Tag i() {
 		return paired("i");
 	}
 
-	public Tag em() {
+	default Tag em() {
 		return paired("em");
 	}
 
-	public Tag mark() {
+	default Tag mark() {
 		return paired("mark");
 	}
 
-	public Tag b() {
+	default Tag b() {
 		return paired("b");
 	}
 
-	public Tag strong() {
+	default Tag strong() {
 		return paired("strong");
 	}
 
-	public Tag s() {
+	default Tag s() {
 		return paired("s");
 	}
 
-	public Tag small() {
+	default Tag small() {
 		return paired("small");
 	}
 
-	public Tag sub() {
+	default Tag sub() {
 		return paired("sub");
 	}
 
-	public Tag sup() {
+	default Tag sup() {
 		return paired("sup");
 	}
 
-	public Tag u() {
+	default Tag u() {
 		return paired("u");
 	}
 
 	// Form
 
-	public String getPrefix() {
+	default String getPrefix() {
 		return "";
 	}
 
-	public Tag input() {
+	default Tag input() {
 		return paired("input");
 	}
 
-	public Tag input(String type) {
+	default Tag input(String type) {
 		return input().attr("type", type);
 	}
 
-	public Tag input(String type, String name) {
+	default Tag input(String type, String name) {
 		return input(type).attr("id", getPrefix() + name).attr("name", name);
 	}
 
-	public Tag select(String name) {
+	default Tag select(String name) {
 		return paired("select").attr("id", getPrefix() + name).attr("name", name);
 	}
 
-	public Tag label(String forId) {
+	default Tag label(String forId) {
 		return paired("label").attr("for", getPrefix() + forId);
 	}
 
-	public Tag label(String forId, Object string) {
+	default Tag label(String forId, Object string) {
 		return label(forId).string(string);
 	}
 
-	public Tag textarea(String name, int rows, int cols) {
+	default Tag textarea(String name, int rows, int cols) {
 		return paired("textarea").attr("id", getPrefix() + name).attr("name", name).attr("rows", rows).attr("cols", cols);
 	}
 
-	public Tag checkbox(String name, boolean checked) {
+	default Tag checkbox(String name, boolean checked) {
 		var t = input("checkbox", name);
 
 		if (checked) {
@@ -570,7 +538,7 @@ public abstract class Tag implements TagConvertible {
 		return t;
 	}
 
-	public Tag button() {
+	default Tag button() {
 		return paired("button");
 	}
 }

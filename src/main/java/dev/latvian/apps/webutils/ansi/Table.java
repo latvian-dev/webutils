@@ -49,7 +49,7 @@ public class Table {
 		}
 
 		public String unformattedValue() {
-			return tag == null ? value.toUnformattedString() : tag.getRawContent();
+			return tag == null ? value.toUnformattedString() : tag.toRawString();
 		}
 
 		public int unformattedLength() {

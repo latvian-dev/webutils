@@ -4,8 +4,6 @@ import dev.latvian.apps.webutils.ansi.Ansi;
 import dev.latvian.apps.webutils.ansi.AnsiComponent;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.util.Map;
 
 public class TagUtils {
@@ -274,42 +272,44 @@ public class TagUtils {
 		};
 	}
 
-	public static String encode(String source) {
-		if (source == null || source.isEmpty()) {
-			return source;
+	public static void encode(StringBuilder builder, String string) {
+		if (string == null || string.isEmpty()) {
+			return;
 		}
 
-		StringBuilder builder = null;
-		var chars = source.toCharArray();
+		var appending = false;
+		var chars = string.toCharArray();
 
 		for (int i = 0; i < chars.length; i++) {
 			var encoded = encode(chars[i]);
 
 			if (!encoded.isEmpty()) {
-				if (builder == null) {
-					builder = new StringBuilder(source.length());
+				if (!appending) {
+					appending = true;
 					builder.append(chars, 0, i);
 				}
 
 				builder.append(encoded);
-			} else if (builder != null) {
+			} else if (appending) {
 				builder.append(chars[i]);
 			}
 		}
 
-		return builder == null ? source : builder.toString();
+		if (!appending) {
+			builder.append(string);
+		}
 	}
 
-	public static void writeAttributes(Writer writer, @Nullable Map<String, String> attributes) throws IOException {
+	public static void writeAttributes(StringBuilder writer, @Nullable Map<String, String> attributes) {
 		if (attributes != null) {
 			for (var entry : attributes.entrySet()) {
-				writer.write(' ');
-				writer.write(entry.getKey());
+				writer.append(' ');
+				writer.append(entry.getKey());
 
 				if (!entry.getValue().equals("<NO_VALUE>")) {
-					writer.write("=\"");
-					writer.write(encode(entry.getValue()));
-					writer.write('"');
+					writer.append("=\"");
+					encode(writer, entry.getValue());
+					writer.append('"');
 				}
 			}
 		}
@@ -319,13 +319,17 @@ public class TagUtils {
 		int col = ANSI_COLORS[depth % ANSI_COLORS.length];
 
 		if (attributes != null) {
+			var sb = new StringBuilder();
+
 			for (var entry : attributes.entrySet()) {
 				component.append(' ');
 				component.append(Ansi.lime(entry.getKey()));
 
 				if (!entry.getValue().equals("<NO_VALUE>")) {
 					component.append(Ansi.of("=\"").color(col));
-					component.append(Ansi.yellow(encode(entry.getValue())));
+					encode(sb, entry.getValue());
+					component.append(Ansi.yellow(sb.toString()));
+					sb.setLength(0);
 					component.append(Ansi.of("\"").color(col));
 				}
 			}

@@ -1,10 +1,6 @@
 package dev.latvian.apps.webutils.html;
 
-import dev.latvian.apps.webutils.ansi.AnsiComponent;
-
-import java.io.Writer;
-
-public class StringTag extends Tag {
+public class StringTag implements Tag {
 	public final String string;
 
 	public StringTag(String string) {
@@ -12,17 +8,12 @@ public class StringTag extends Tag {
 	}
 
 	@Override
-	public String getRawContent() {
-		return TagUtils.encode(string);
+	public String toString() {
+		return string;
 	}
 
 	@Override
 	public boolean isEmpty() {
-		return string.isEmpty();
-	}
-
-	@Override
-	public boolean isEmptyRecursively() {
 		return string.isEmpty();
 	}
 
@@ -31,12 +22,12 @@ public class StringTag extends Tag {
 	}
 
 	@Override
-	public void write(Writer writer) throws Throwable {
-		writer.write(getRawContent());
+	public void append(StringBuilder builder, boolean header) {
+		TagUtils.encode(builder, string);
 	}
 
 	@Override
-	public void ansi(AnsiComponent component, int depth, int indent) {
-		component.append(getRawContent());
+	public void appendRaw(StringBuilder builder) {
+		TagUtils.encode(builder, string);
 	}
 }
