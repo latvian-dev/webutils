@@ -10,4 +10,5 @@ public interface MimeType {
 	String FORM = "application/x-www-form-urlencoded";
 	String XML = "application/xml; charset=utf-8";
 	String XML_TEXT = "text/xml; charset=utf-8";
+	String SVG = "image/svg+xml; charset=utf-8";
 }

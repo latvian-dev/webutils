@@ -9,6 +9,7 @@ import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public interface Tag extends TagConvertible {
 	@Override
 	default void appendHTMLTag(Tag parent) {
@@ -273,6 +274,7 @@ public interface Tag extends TagConvertible {
 		return div().classes(classes);
 	}
 
+	@SuppressWarnings("ConfusingMainMethod")
 	default Tag main() {
 		return paired("main");
 	}
