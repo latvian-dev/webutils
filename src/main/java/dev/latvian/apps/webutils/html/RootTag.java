@@ -4,14 +4,7 @@ import dev.latvian.apps.webutils.net.MimeType;
 
 import java.util.List;
 
-public class RootTag extends PairedTag implements ResponseTag {
-	public static String SITE_NAME = "";
-	public static String ROOT_URL = "";
-	public static String ICON_PATH = "";
-	public static int ICON_SIZE = 48;
-	public static List<String> KEYWORDS = List.of();
-	public static String AUTHOR = "";
-
+public abstract class RootTag extends PairedTag implements ResponseTag {
 	public final String path;
 	public final String title;
 	public final String description;
@@ -20,10 +13,6 @@ public class RootTag extends PairedTag implements ResponseTag {
 
 	public RootTag(String path, String title, String description) {
 		super("html");
-
-		if (ROOT_URL.isEmpty()) {
-			throw new IllegalStateException("You must set RootTag.ROOT_URL!");
-		}
 
 		this.path = path;
 		this.title = title;
@@ -40,19 +29,27 @@ public class RootTag extends PairedTag implements ResponseTag {
 			head.meta("name", "description", "content", description);
 		}
 
-		if (!KEYWORDS.isEmpty()) {
-			head.meta("name", "keywords", "content", String.join(", ", KEYWORDS));
+		var keywords = getKeywords();
+
+		if (!keywords.isEmpty()) {
+			head.meta("name", "keywords", "content", String.join(", ", keywords));
 		}
 
-		if (!AUTHOR.isEmpty()) {
-			head.meta("name", "author", "content", AUTHOR);
+		var author = getAuthor();
+
+		if (!author.isEmpty()) {
+			head.meta("name", "author", "content", author);
 		}
+
+		var rootUrl = getRootUrl();
 
 		this.head.meta("property", "og:type", "content", "website");
-		this.head.meta("property", "og:url", "content", ROOT_URL + path);
+		this.head.meta("property", "og:url", "content", rootUrl + path);
 
-		if (!SITE_NAME.isEmpty()) {
-			this.head.meta("property", "og:site_name", "content", SITE_NAME);
+		var siteName = getSiteName();
+
+		if (!siteName.isEmpty()) {
+			this.head.meta("property", "og:site_name", "content", siteName);
 		}
 
 		this.head.meta("property", "og:title", "content", title);
@@ -61,10 +58,14 @@ public class RootTag extends PairedTag implements ResponseTag {
 			this.head.meta("property", "og:description", "content", description);
 		}
 
-		if (!ICON_PATH.isEmpty()) {
-			head.meta("property", "og:image", "content", ROOT_URL + ICON_PATH);
-			head.meta("property", "og:image:width", "content", ICON_SIZE);
-			head.meta("property", "og:image:height", "content", ICON_SIZE);
+		var iconPath = getIconPath();
+
+		if (!iconPath.isEmpty()) {
+			var iconSize = getIconSize();
+
+			head.meta("property", "og:image", "content", rootUrl + iconPath);
+			head.meta("property", "og:image:width", "content", iconSize);
+			head.meta("property", "og:image:height", "content", iconSize);
 		}
 
 		this.body = paired("body");
@@ -91,5 +92,25 @@ public class RootTag extends PairedTag implements ResponseTag {
 	@Override
 	public String getMimeType() {
 		return MimeType.HTML;
+	}
+
+	public abstract String getSiteName();
+
+	public abstract String getRootUrl();
+
+	public String getAuthor() {
+		return "";
+	}
+
+	public List<String> getKeywords() {
+		return List.of();
+	}
+
+	public int getIconSize() {
+		return 48;
+	}
+
+	public String getIconPath() {
+		return "";
 	}
 }
