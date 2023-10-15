@@ -1,10 +1,11 @@
 package dev.latvian.apps.webutils.html;
 
-import dev.latvian.apps.webutils.net.MimeType;
+import dev.latvian.apps.webutils.net.Response;
+import io.javalin.http.HttpStatus;
 
 import java.util.List;
 
-public abstract class RootTag extends PairedTag implements ResponseTag {
+public abstract class RootTag extends PairedTag {
 	public final String path;
 	public final String title;
 	public final String description;
@@ -90,8 +91,8 @@ public abstract class RootTag extends PairedTag implements ResponseTag {
 	}
 
 	@Override
-	public String getMimeType() {
-		return MimeType.HTML;
+	public Response asResponse() {
+		return asResponse(HttpStatus.OK, true);
 	}
 
 	public abstract String getSiteName();

@@ -11,4 +11,5 @@ public interface MimeType {
 	String XML = "application/xml; charset=utf-8";
 	String XML_TEXT = "text/xml; charset=utf-8";
 	String SVG = "image/svg+xml; charset=utf-8";
+	String CSS = "text/css; charset=utf-8";
 }

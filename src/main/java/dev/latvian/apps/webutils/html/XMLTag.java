@@ -1,8 +1,13 @@
 package dev.latvian.apps.webutils.html;
 
+import dev.latvian.apps.webutils.net.FileResponse;
 import dev.latvian.apps.webutils.net.MimeType;
+import dev.latvian.apps.webutils.net.Response;
+import io.javalin.http.HttpStatus;
 
-public class XMLTag extends PairedTag implements ResponseTag {
+import java.nio.charset.StandardCharsets;
+
+public class XMLTag extends PairedTag {
 	public XMLTag(String tag) {
 		super(tag);
 	}
@@ -22,7 +27,12 @@ public class XMLTag extends PairedTag implements ResponseTag {
 	}
 
 	@Override
-	public String getMimeType() {
-		return MimeType.XML_TEXT;
+	public Response asResponse() {
+		return asResponse(HttpStatus.OK, true);
+	}
+
+	@Override
+	public Response asResponse(HttpStatus status, boolean header) {
+		return FileResponse.of(status, MimeType.XML_TEXT, toTagString(header).getBytes(StandardCharsets.UTF_8));
 	}
 }
