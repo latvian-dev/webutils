@@ -32,6 +32,10 @@ public interface Response {
 
 	void result(Context ctx);
 
+	default HttpRequest.BodyPublisher bodyPublisher() {
+		throw new IllegalStateException("Body publisher not supported");
+	}
+
 	default Response withCookie(Cookie cookie) {
 		return new ResponseWithCookie(this, cookie);
 	}
@@ -56,7 +60,7 @@ public interface Response {
 		return cache(duration, true);
 	}
 
-	default HttpRequest.BodyPublisher bodyPublisher() {
-		throw new IllegalStateException("Body publisher not supported");
+	default Response noLog() {
+		return new NoLogResponse(this);
 	}
 }
