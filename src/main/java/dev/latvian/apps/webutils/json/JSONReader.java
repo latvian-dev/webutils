@@ -28,7 +28,6 @@ public interface JSONReader {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	default <T> T adapt(Class<T> type) {
 		return json().adapt(readValue(), type);
 	}
@@ -115,17 +114,43 @@ public interface JSONReader {
 
 		var c = peek();
 
-		while (c == '-' || c == '+' || c == '.' || (c >= '0' && c <= '9')) {
+		if (c == '-' || c == '+') {
 			builder.append(read());
 			c = peek();
 		}
 
-		String str = builder.toString();
+		boolean floating = false;
 
-		if (str.contains(".")) {
+		while (true) {
+			if (c == '.') {
+				if (floating) {
+					throw new IllegalStateException("Invalid number: Multiple '.'");
+				} else {
+					floating = true;
+				}
+
+				builder.append(read());
+			} else if (c == 'E' || c == 'e') {
+				builder.append(read());
+
+				if (peek() == '-') {
+					builder.append(read());
+				}
+			} else if (c >= '0' && c <= '9') {
+				builder.append(read());
+			} else {
+				break;
+			}
+
+			c = peek();
+		}
+
+		var str = builder.toString();
+
+		if (floating) {
 			return Double.parseDouble(str);
 		} else {
-			return Long.parseLong(str);
+			return Long.decode(str);
 		}
 	}
 

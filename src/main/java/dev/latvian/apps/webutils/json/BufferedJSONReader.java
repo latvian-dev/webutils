@@ -5,10 +5,14 @@ import java.io.Reader;
 public class BufferedJSONReader implements JSONReader {
 	private final JSON json;
 	private final Reader reader;
+	private boolean move;
+	private char peek;
 
 	public BufferedJSONReader(JSON json, Reader reader) {
 		this.json = json;
 		this.reader = reader;
+		this.move = true;
+		this.peek = 0;
 	}
 
 	@Override
@@ -18,22 +22,22 @@ public class BufferedJSONReader implements JSONReader {
 
 	@Override
 	public char read() {
-		try {
-			return (char) reader.read();
-		} catch (Exception e) {
-			throw new IllegalStateException(e);
-		}
+		move = true;
+		return peek();
 	}
 
 	@Override
 	public char peek() {
-		try {
-			reader.mark(1);
-			int c = reader.read();
-			reader.reset();
-			return (char) c;
-		} catch (Exception e) {
-			throw new IllegalStateException(e);
+		if (move) {
+			move = false;
+
+			try {
+				peek = (char) reader.read();
+			} catch (Exception e) {
+				throw new IllegalStateException(e);
+			}
 		}
+
+		return peek;
 	}
 }

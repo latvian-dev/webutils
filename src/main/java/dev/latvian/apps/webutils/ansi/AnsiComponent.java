@@ -8,33 +8,33 @@ public class AnsiComponent implements AnsiAppendable {
 	public String text;
 	private int color = -1;
 	private int bgColor = -1;
-	private boolean bold = false;
-	private boolean italic = false;
-	private boolean underline = false;
-	private boolean blink = false;
-	private boolean reverse = false;
-	private boolean hidden = false;
-	private boolean strikethrough = false;
+	private int bold = -1;
+	private int italic = -1;
+	private int underline = -1;
+	private int blink = -1;
+	private int reverse = -1;
+	private int hidden = -1;
+	private int strikethrough = -1;
 	private List<AnsiAppendable> children;
 
 	public AnsiComponent(Object text) {
 		this.text = String.valueOf(text);
 	}
 
-	private static boolean appendMode(StringBuilder builder, boolean semi, boolean prevMode, boolean mode, char code, char resetCode, AnsiContext ctx, String debug) {
+	private static boolean appendMode(StringBuilder builder, boolean semi, int prevMode, int mode, char code, char resetCode, AnsiContext ctx, String debug) {
 		if (prevMode != mode) {
 			if (semi) {
 				builder.append(';');
 			}
 
 			if (ctx.debug()) {
-				if (mode) {
+				if (mode == 1) {
 					builder.append(debug);
 				} else {
 					builder.append('!');
 					builder.append(debug);
 				}
-			} else if (mode) {
+			} else if (mode == 1) {
 				builder.append(code);
 			} else {
 				builder.append('2');
@@ -117,13 +117,13 @@ public class AnsiComponent implements AnsiAppendable {
 
 		int pColor = parent == null ? -1 : parent.color;
 		int pBgColor = parent == null ? -1 : parent.bgColor;
-		boolean pBold = parent != null && parent.bold;
-		boolean pItalic = parent != null && parent.italic;
-		boolean pUnderline = parent != null && parent.underline;
-		boolean pBlink = parent != null && parent.blink;
-		boolean pReverse = parent != null && parent.reverse;
-		boolean pHidden = parent != null && parent.hidden;
-		boolean pStrikethrough = parent != null && parent.strikethrough;
+		int pBold = parent == null ? -1 : parent.bold;
+		int pItalic = parent == null ? -1 : parent.italic;
+		int pUnderline = parent == null ? -1 : parent.underline;
+		int pBlink = parent == null ? -1 : parent.blink;
+		int pReverse = parent == null ? -1 : parent.reverse;
+		int pHidden = parent == null ? -1 : parent.hidden;
+		int pStrikethrough = parent == null ? -1 : parent.strikethrough;
 		boolean changed = color != pColor || bgColor != pBgColor || bold != pBold || italic != pItalic || underline != pUnderline || blink != pBlink || reverse != pReverse || hidden != pHidden || strikethrough != pStrikethrough;
 
 		if (changed) {
@@ -230,37 +230,37 @@ public class AnsiComponent implements AnsiAppendable {
 	}
 
 	public AnsiComponent bold() {
-		bold = true;
+		bold = 1;
 		return this;
 	}
 
 	public AnsiComponent italic() {
-		italic = true;
+		italic = 1;
 		return this;
 	}
 
 	public AnsiComponent underline() {
-		underline = true;
+		underline = 1;
 		return this;
 	}
 
 	public AnsiComponent blink() {
-		blink = true;
+		blink = 1;
 		return this;
 	}
 
 	public AnsiComponent reverse() {
-		reverse = true;
+		reverse = 1;
 		return this;
 	}
 
 	public AnsiComponent hidden() {
-		hidden = true;
+		hidden = 1;
 		return this;
 	}
 
 	public AnsiComponent strikethrough() {
-		strikethrough = true;
+		strikethrough = 1;
 		return this;
 	}
 
@@ -341,7 +341,7 @@ public class AnsiComponent implements AnsiAppendable {
 		return white().darkRedBg();
 	}
 
-	public AnsiComponent debugColor(int index) {
+	public AnsiComponent treeColor(int index) {
 		return switch (index & 3) {
 			case 0 -> red();
 			case 1 -> green();
