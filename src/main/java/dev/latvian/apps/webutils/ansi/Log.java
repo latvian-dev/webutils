@@ -63,7 +63,7 @@ public class Log {
 		var c = Ansi.of();
 		c.append(Ansi.cyan(TimeUtils.formatDate(new StringBuilder(), now).toString()));
 		c.append(' ');
-		c.append(format(Ansi.of(message), type));
+		c.append(format(message, type));
 		System.out.println(c);
 	}
 
