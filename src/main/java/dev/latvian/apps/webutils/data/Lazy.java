@@ -1,6 +1,6 @@
 package dev.latvian.apps.webutils.data;
 
-import dev.latvian.apps.webutils.ansi.Ansi;
+import dev.latvian.apps.webutils.ansi.Log;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -56,7 +56,7 @@ public class Lazy<T> implements Supplier<T> {
 			try {
 				object = getter.get();
 			} catch (Exception ex) {
-				Ansi.log("! " + ex);
+				Log.error(ex);
 			}
 		}
 

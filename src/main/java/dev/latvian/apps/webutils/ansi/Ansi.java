@@ -1,10 +1,8 @@
 package dev.latvian.apps.webutils.ansi;
 
-import dev.latvian.apps.webutils.TimeUtils;
 import dev.latvian.apps.webutils.json.JSON;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Date;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -13,7 +11,7 @@ import java.util.regex.Pattern;
  */
 public interface Ansi {
 	Pattern PATTERN = Pattern.compile("\u001B\\[(?:\\d;)?\\d+[mD]");
-	char CODE = '\u001B';
+	char CHAR = '\u001B';
 
 	String[] COLOR_NAMES = {
 			"black",
@@ -213,47 +211,5 @@ public interface Ansi {
 
 	static AnsiComponent white(Object text) {
 		return of(text).white();
-	}
-
-	static Date log(Object message, boolean newline) {
-		var c = of();
-		var now = new Date();
-		c.append(cyan(TimeUtils.formatDate(new StringBuilder(), now).toString()));
-
-		var c1 = of(message);
-
-		exit:
-		if (c1.text.length() >= 3 && c1.text.charAt(1) == ' ') {
-			switch (c1.text.charAt(0)) {
-				case '|' -> c1.blue();
-				case '+' -> c1.green();
-				case '*' -> c1.orange();
-				case '~' -> c1.yellow();
-				case '-' -> c1.red();
-				case '!' -> c1.error();
-				case '?' -> c1.lightGray();
-				case '`' -> c1.teal();
-				default -> {
-					break exit;
-				}
-			}
-
-			c1.text = c1.text.substring(2);
-		}
-
-		c.append(' ');
-		c.append(c1);
-
-		if (newline) {
-			System.out.println(c);
-		} else {
-			System.out.print(c);
-		}
-
-		return now;
-	}
-
-	static Date log(Object message) {
-		return log(message, true);
 	}
 }

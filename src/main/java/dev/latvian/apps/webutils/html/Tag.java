@@ -2,6 +2,7 @@ package dev.latvian.apps.webutils.html;
 
 import dev.latvian.apps.webutils.ansi.Ansi;
 import dev.latvian.apps.webutils.ansi.AnsiComponent;
+import dev.latvian.apps.webutils.ansi.Log;
 import dev.latvian.apps.webutils.net.FileResponse;
 import dev.latvian.apps.webutils.net.MimeType;
 import dev.latvian.apps.webutils.net.Response;
@@ -43,7 +44,7 @@ public interface Tag extends TagConvertible {
 		try {
 			appendRaw(builder);
 		} catch (OutOfMemoryError error) {
-			Ansi.log("! Out of memory while generating HTML:");
+			Log.error("Out of memory while generating HTML:");
 			error.printStackTrace();
 		} catch (Throwable error) {
 			error.printStackTrace();
@@ -58,7 +59,7 @@ public interface Tag extends TagConvertible {
 		try {
 			append(builder, header);
 		} catch (OutOfMemoryError error) {
-			Ansi.log("! Out of memory while generating HTML:");
+			Log.error("Out of memory while generating HTML:");
 			error.printStackTrace();
 		} catch (Throwable error) {
 			error.printStackTrace();

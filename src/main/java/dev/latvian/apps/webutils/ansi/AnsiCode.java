@@ -16,13 +16,13 @@ public enum AnsiCode implements AnsiAppendable {
 	@Override
 	public void appendAnsi(StringBuilder builder, AnsiContext ctx) {
 		if (!ctx.unformatted()) {
-			builder.append(ctx.debug() ? '§' : Ansi.CODE);
+			builder.append(ctx.debug() ? '§' : Ansi.CHAR);
 			builder.append(code);
 		}
 	}
 
 	@Override
 	public String toString() {
-		return Ansi.CODE + code;
+		return Ansi.CHAR + code;
 	}
 }

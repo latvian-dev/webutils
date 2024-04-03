@@ -127,7 +127,7 @@ public class AnsiComponent implements AnsiAppendable {
 		boolean changed = color != pColor || bgColor != pBgColor || bold != pBold || italic != pItalic || underline != pUnderline || blink != pBlink || reverse != pReverse || hidden != pHidden || strikethrough != pStrikethrough;
 
 		if (changed) {
-			builder.append(Ansi.CODE);
+			builder.append(Ansi.CHAR);
 
 			if (ctx.debug()) {
 				builder.append("[9").append((ctx.index++ & 3) + 1).append("m§");
@@ -147,7 +147,7 @@ public class AnsiComponent implements AnsiAppendable {
 
 			if (ctx.debug()) {
 				builder.append(']');
-				builder.append(Ansi.CODE);
+				builder.append(Ansi.CHAR);
 				builder.append(AnsiCode.RESET.code);
 			} else {
 				builder.append('m');
@@ -165,7 +165,7 @@ public class AnsiComponent implements AnsiAppendable {
 		}
 
 		if (changed) {
-			builder.append(Ansi.CODE);
+			builder.append(Ansi.CHAR);
 
 			if (ctx.debug()) {
 				builder.append("[9").append((ctx.index++ & 3) + 1).append("m§");
@@ -185,7 +185,7 @@ public class AnsiComponent implements AnsiAppendable {
 
 			if (ctx.debug()) {
 				builder.append(']');
-				builder.append(Ansi.CODE);
+				builder.append(Ansi.CHAR);
 				builder.append(AnsiCode.RESET.code);
 			} else {
 				builder.append('m');

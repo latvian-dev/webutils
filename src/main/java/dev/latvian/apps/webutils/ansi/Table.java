@@ -215,7 +215,7 @@ public class Table {
 	}
 
 	public void print() {
-		Ansi.log("\n" + String.join("\n", getLines(true)));
+		Log.info("\n" + String.join("\n", getLines(true)));
 	}
 
 	public Tag toTag() {
