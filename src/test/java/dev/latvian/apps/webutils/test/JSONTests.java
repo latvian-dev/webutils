@@ -43,6 +43,7 @@ public class JSONTests {
 		Log.info(content);
 		var json = JSON.DEFAULT.read(content).readObject();
 		Log.info(Ansi.ofObject(json));
+		Log.info(JSON.DEFAULT.writePretty(json));
 
 		Log.info(json.asInt("total_launches"));
 		Log.info(json.asDouble("hourly"));

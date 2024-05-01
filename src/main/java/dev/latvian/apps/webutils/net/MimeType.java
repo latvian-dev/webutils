@@ -12,4 +12,7 @@ public interface MimeType {
 	String XML_TEXT = "text/xml; charset=utf-8";
 	String SVG = "image/svg+xml; charset=utf-8";
 	String CSS = "text/css; charset=utf-8";
+	String PDF = "application/pdf";
+	String ZIP = "application/zip";
+	String JAR = "application/java-archive";
 }

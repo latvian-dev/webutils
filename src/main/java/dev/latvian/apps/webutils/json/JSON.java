@@ -183,10 +183,20 @@ public class JSON {
 		return builder.toString();
 	}
 
+	public void write(Path path, Object value, boolean pretty) throws IOException {
+		if (Files.notExists(path.getParent())) {
+			Files.createDirectories(path.getParent());
+		}
+
+		Files.writeString(path, pretty ? writePretty(value) : write(value));
+	}
+
 	public void write(Writer writer, @Nullable Object value, int depth, boolean pretty) throws IOException {
 		if (depth > 1000) {
 			throw new IllegalStateException("JSON depth limit reached");
-		} else if (value == null || value == NULL) {
+		}
+
+		if (value == null || value == NULL) {
 			writer.write("null");
 		} else if (value instanceof JSONSerializable) {
 			write(writer, ((JSONSerializable) value).toJSON(), depth, pretty);
@@ -207,11 +217,32 @@ public class JSON {
 					writer.write(',');
 				}
 
+				if (pretty) {
+					writer.write('\n');
+
+					for (int i = 0; i <= depth; i++) {
+						writer.write('\t');
+					}
+				}
+
 				writer.write('"');
 				escape(writer, String.valueOf(entry.getKey()));
 				writer.write('"');
 				writer.write(':');
+
+				if (pretty) {
+					writer.write(' ');
+				}
+
 				write(writer, entry.getValue(), depth + 1, pretty);
+			}
+
+			if (pretty) {
+				writer.write('\n');
+
+				for (int i = 0; i < depth; i++) {
+					writer.write('\t');
+				}
 			}
 
 			writer.write('}');
@@ -226,7 +257,23 @@ public class JSON {
 					writer.write(',');
 				}
 
+				if (pretty) {
+					writer.write('\n');
+
+					for (int i = 0; i <= depth; i++) {
+						writer.write('\t');
+					}
+				}
+
 				write(writer, o, depth + 1, pretty);
+			}
+
+			if (pretty) {
+				writer.write('\n');
+
+				for (int i = 0; i < depth; i++) {
+					writer.write('\t');
+				}
 			}
 
 			writer.write(']');
