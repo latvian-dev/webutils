@@ -185,4 +185,39 @@ public class JSONArray extends ArrayList<Object> {
 	public String toPrettyString() {
 		return JSON.DEFAULT.writePretty(this);
 	}
+
+	public boolean removeDeep(DeepRemovePredicate predicate, boolean removeEmpty) {
+		boolean modified = false;
+		var it = iterator();
+		int index = 0;
+
+		while (it.hasNext()) {
+			var v = it.next();
+
+			if (predicate.remove("", index++, v)) {
+				modified = true;
+				it.remove();
+			} else if (v instanceof JSONObject o) {
+				if (o.removeDeep(predicate, removeEmpty)) {
+					modified = true;
+				}
+
+				if (removeEmpty && o.isEmpty()) {
+					modified = true;
+					it.remove();
+				}
+			} else if (v instanceof JSONArray a) {
+				if (a.removeDeep(predicate, removeEmpty)) {
+					modified = true;
+				}
+
+				if (removeEmpty && a.isEmpty()) {
+					modified = true;
+					it.remove();
+				}
+			}
+		}
+
+		return modified;
+	}
 }

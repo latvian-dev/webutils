@@ -156,4 +156,39 @@ public class JSONObject extends LinkedHashMap<String, Object> {
 	public String toPrettyString() {
 		return JSON.DEFAULT.writePretty(this);
 	}
+
+	public boolean removeDeep(DeepRemovePredicate predicate, boolean removeEmpty) {
+		boolean modified = false;
+		var it = entrySet().iterator();
+
+		while (it.hasNext()) {
+			var e = it.next();
+			var v = e.getValue();
+
+			if (predicate.remove(e.getKey(), -1, v)) {
+				modified = true;
+				it.remove();
+			} else if (v instanceof JSONObject o) {
+				if (o.removeDeep(predicate, removeEmpty)) {
+					modified = true;
+				}
+
+				if (removeEmpty && o.isEmpty()) {
+					modified = true;
+					it.remove();
+				}
+			} else if (v instanceof JSONArray a) {
+				if (a.removeDeep(predicate, removeEmpty)) {
+					modified = true;
+				}
+
+				if (removeEmpty && a.isEmpty()) {
+					modified = true;
+					it.remove();
+				}
+			}
+		}
+
+		return modified;
+	}
 }
