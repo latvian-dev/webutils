@@ -1,7 +1,7 @@
 package dev.latvian.apps.webutils.html;
 
-import dev.latvian.apps.webutils.net.Response;
-import io.javalin.http.HttpStatus;
+import dev.latvian.apps.tinyserver.http.response.HTTPResponse;
+import dev.latvian.apps.tinyserver.http.response.HTTPStatus;
 
 import java.util.List;
 
@@ -91,8 +91,8 @@ public abstract class RootTag extends PairedTag {
 	}
 
 	@Override
-	public Response asResponse() {
-		return asResponse(HttpStatus.OK, true);
+	public HTTPResponse asResponse() {
+		return asResponse(HTTPStatus.OK, true);
 	}
 
 	public abstract String getSiteName();

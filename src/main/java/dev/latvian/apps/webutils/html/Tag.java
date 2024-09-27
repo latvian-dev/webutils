@@ -1,12 +1,11 @@
 package dev.latvian.apps.webutils.html;
 
+import dev.latvian.apps.tinyserver.content.MimeType;
+import dev.latvian.apps.tinyserver.http.response.HTTPResponse;
+import dev.latvian.apps.tinyserver.http.response.HTTPStatus;
 import dev.latvian.apps.webutils.ansi.Ansi;
 import dev.latvian.apps.webutils.ansi.AnsiComponent;
 import dev.latvian.apps.webutils.ansi.Log;
-import dev.latvian.apps.webutils.net.FileResponse;
-import dev.latvian.apps.webutils.net.MimeType;
-import dev.latvian.apps.webutils.net.Response;
-import io.javalin.http.HttpStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
@@ -132,12 +131,12 @@ public interface Tag extends TagConvertible {
 	default void replace(Pattern pattern, BiConsumer<Tag, Matcher> replace) {
 	}
 
-	default Response asResponse() {
-		return asResponse(HttpStatus.OK, false);
+	default HTTPResponse asResponse() {
+		return asResponse(HTTPStatus.OK, false);
 	}
 
-	default Response asResponse(HttpStatus status, boolean header) {
-		return FileResponse.of(status, MimeType.HTML, toTagString(header).getBytes(StandardCharsets.UTF_8));
+	default HTTPResponse asResponse(HTTPStatus status, boolean header) {
+		return status.content(toTagString(header).getBytes(StandardCharsets.UTF_8), MimeType.HTML);
 	}
 
 	default Tag string(Object string) {

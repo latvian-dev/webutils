@@ -1,9 +1,8 @@
 package dev.latvian.apps.webutils.html;
 
-import dev.latvian.apps.webutils.net.FileResponse;
-import dev.latvian.apps.webutils.net.MimeType;
-import dev.latvian.apps.webutils.net.Response;
-import io.javalin.http.HttpStatus;
+import dev.latvian.apps.tinyserver.content.MimeType;
+import dev.latvian.apps.tinyserver.http.response.HTTPResponse;
+import dev.latvian.apps.tinyserver.http.response.HTTPStatus;
 
 import java.nio.charset.StandardCharsets;
 
@@ -27,12 +26,12 @@ public class XMLTag extends PairedTag {
 	}
 
 	@Override
-	public Response asResponse() {
-		return asResponse(HttpStatus.OK, true);
+	public HTTPResponse asResponse() {
+		return asResponse(HTTPStatus.OK, true);
 	}
 
 	@Override
-	public Response asResponse(HttpStatus status, boolean header) {
-		return FileResponse.of(status, MimeType.XML_TEXT, toTagString(header).getBytes(StandardCharsets.UTF_8));
+	public HTTPResponse asResponse(HTTPStatus status, boolean header) {
+		return status.content(toTagString(header).getBytes(StandardCharsets.UTF_8), MimeType.XML_TEXT);
 	}
 }

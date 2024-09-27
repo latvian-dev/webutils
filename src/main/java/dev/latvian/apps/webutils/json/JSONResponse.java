@@ -1,20 +1,19 @@
 package dev.latvian.apps.webutils.json;
 
-import dev.latvian.apps.webutils.net.FileResponse;
-import dev.latvian.apps.webutils.net.MimeType;
-import dev.latvian.apps.webutils.net.Response;
-import io.javalin.http.HttpStatus;
+import dev.latvian.apps.tinyserver.content.MimeType;
+import dev.latvian.apps.tinyserver.http.response.HTTPResponse;
+import dev.latvian.apps.tinyserver.http.response.HTTPStatus;
 
 import java.nio.charset.StandardCharsets;
 
 public interface JSONResponse {
-	Response SUCCESS = of(HttpStatus.OK, JSONObject.of("success", true));
+	HTTPResponse SUCCESS = HTTPStatus.OK.json(JSONObject.of("success", true).toString());
 
-	static Response of(HttpStatus status, Object json) {
-		return FileResponse.of(status, MimeType.JSON, JSON.DEFAULT.write(json).getBytes(StandardCharsets.UTF_8));
+	static HTTPResponse of(HTTPStatus status, Object json) {
+		return status.content(JSON.DEFAULT.write(json).getBytes(StandardCharsets.UTF_8), MimeType.JSON);
 	}
 
-	static Response of(Object json) {
-		return of(HttpStatus.OK, json);
+	static HTTPResponse of(Object json) {
+		return of(HTTPStatus.OK, json);
 	}
 }
