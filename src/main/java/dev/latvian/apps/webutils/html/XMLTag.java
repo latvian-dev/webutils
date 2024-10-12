@@ -4,8 +4,6 @@ import dev.latvian.apps.tinyserver.content.MimeType;
 import dev.latvian.apps.tinyserver.http.response.HTTPResponse;
 import dev.latvian.apps.tinyserver.http.response.HTTPStatus;
 
-import java.nio.charset.StandardCharsets;
-
 public class XMLTag extends PairedTag {
 	public XMLTag(String tag) {
 		super(tag);
@@ -32,6 +30,6 @@ public class XMLTag extends PairedTag {
 
 	@Override
 	public HTTPResponse asResponse(HTTPStatus status, boolean header) {
-		return status.content(toTagString(header).getBytes(StandardCharsets.UTF_8), MimeType.XML_TEXT);
+		return status.content(toTagString(header), MimeType.XML_TEXT).gzip();
 	}
 }

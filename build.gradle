@@ -33,7 +33,7 @@ repositories {
 dependencies {
 	implementation('net.dv8tion:JDA:5.0.0-beta.21')
 	compileOnly('dev.latvian.apps:ansi:1.0.0-build.2')
-	implementation('dev.latvian.apps:tiny-java-server:1.0.0-build.8')
+	implementation('dev.latvian.apps:tiny-java-server:1.0.0-build.11')
 	implementation('org.mongodb:mongodb-driver-sync:5.0.0')
 	// implementation('org.slf4j:slf4j-simple:2.0.5')
 	// implementation('com.google.guava:guava:31.1-jre') { exclude group: "com.google.code.findbugs" }

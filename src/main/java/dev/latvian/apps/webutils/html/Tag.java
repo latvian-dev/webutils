@@ -1,11 +1,9 @@
 package dev.latvian.apps.webutils.html;
 
-import dev.latvian.apps.tinyserver.content.MimeType;
 import dev.latvian.apps.tinyserver.http.response.HTTPResponse;
 import dev.latvian.apps.tinyserver.http.response.HTTPStatus;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
@@ -121,7 +119,7 @@ public interface Tag extends TagConvertible {
 	}
 
 	default HTTPResponse asResponse(HTTPStatus status, boolean header) {
-		return status.content(toTagString(header).getBytes(StandardCharsets.UTF_8), MimeType.HTML);
+		return status.html(toTagString(header));
 	}
 
 	default Tag string(Object string) {
