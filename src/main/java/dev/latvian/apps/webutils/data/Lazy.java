@@ -1,27 +1,22 @@
 package dev.latvian.apps.webutils.data;
 
-import dev.latvian.apps.webutils.ansi.Log;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
 public class Lazy<T> implements Supplier<T> {
-	@FunctionalInterface
-	public interface LazySupplier<T> {
-		T get() throws Exception;
-	}
-
-	private record Present<T>(T value) implements LazySupplier<T> {
+	private record Present<T>(T value) implements Callable<T> {
 		@Override
-		public T get() {
+		public T call() {
 			return value;
 		}
 	}
 
-	public static final Lazy<?> EMPTY = of(() -> null);
+	public static final Lazy<?> EMPTY = present(null);
 
-	public static <T> Lazy<T> of(LazySupplier<T> getter) {
+	public static <T> Lazy<T> of(Callable<T> getter) {
 		return new Lazy<>(getter);
 	}
 
@@ -34,11 +29,11 @@ public class Lazy<T> implements Supplier<T> {
 		return (Lazy<T>) EMPTY;
 	}
 
-	private final LazySupplier<T> getter;
+	private final Callable<T> getter;
 	private T object;
 	private boolean inited;
 
-	private Lazy(LazySupplier<T> g) {
+	private Lazy(Callable<T> g) {
 		getter = g;
 	}
 
@@ -54,9 +49,9 @@ public class Lazy<T> implements Supplier<T> {
 			inited = true;
 
 			try {
-				object = getter.get();
+				object = getter.call();
 			} catch (Exception ex) {
-				Log.error(ex);
+				throw new RuntimeException(ex);
 			}
 		}
 

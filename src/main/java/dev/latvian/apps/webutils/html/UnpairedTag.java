@@ -1,7 +1,5 @@
 package dev.latvian.apps.webutils.html;
 
-import dev.latvian.apps.webutils.ansi.Ansi;
-import dev.latvian.apps.webutils.ansi.AnsiComponent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;
@@ -67,14 +65,5 @@ public class UnpairedTag implements Tag {
 
 	@Override
 	public void appendRaw(StringBuilder builder) {
-	}
-
-	@Override
-	public void ansi(AnsiComponent component, int depth, int indent) {
-		int col = TagUtils.ANSI_COLORS[depth % TagUtils.ANSI_COLORS.length];
-
-		component.append(Ansi.of("<" + this.name).color(col));
-		TagUtils.ansiAttributes(component, this.attributes, depth);
-		component.append(Ansi.of(" />").color(col));
 	}
 }

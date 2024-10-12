@@ -3,9 +3,6 @@ package dev.latvian.apps.webutils.html;
 import dev.latvian.apps.tinyserver.content.MimeType;
 import dev.latvian.apps.tinyserver.http.response.HTTPResponse;
 import dev.latvian.apps.tinyserver.http.response.HTTPStatus;
-import dev.latvian.apps.webutils.ansi.Ansi;
-import dev.latvian.apps.webutils.ansi.AnsiComponent;
-import dev.latvian.apps.webutils.ansi.Log;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
@@ -33,18 +30,13 @@ public interface Tag extends TagConvertible {
 
 	void appendRaw(StringBuilder builder);
 
-	default void ansi(AnsiComponent component, int depth, int indent) {
-		component.append(toRawString());
-	}
-
 	default String toRawString() {
 		var builder = new StringBuilder();
 
 		try {
 			appendRaw(builder);
 		} catch (OutOfMemoryError error) {
-			Log.error("Out of memory while generating HTML:");
-			error.printStackTrace();
+			throw new RuntimeException("Out of memory while generating HTML:", error);
 		} catch (Throwable error) {
 			error.printStackTrace();
 		}
@@ -58,19 +50,12 @@ public interface Tag extends TagConvertible {
 		try {
 			append(builder, header);
 		} catch (OutOfMemoryError error) {
-			Log.error("Out of memory while generating HTML:");
-			error.printStackTrace();
+			throw new RuntimeException("Out of memory while generating HTML:", error);
 		} catch (Throwable error) {
 			error.printStackTrace();
 		}
 
 		return builder.toString();
-	}
-
-	default AnsiComponent toAnsi(boolean indent) {
-		var component = Ansi.of();
-		ansi(component, 0, indent ? 0 : -1);
-		return component;
 	}
 
 	default Tag add(Tag tag) {

@@ -1,19 +1,10 @@
 package dev.latvian.apps.webutils.html;
 
-import dev.latvian.apps.webutils.ansi.Ansi;
-import dev.latvian.apps.webutils.ansi.AnsiComponent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
 public class TagUtils {
-	public static final int[] ANSI_COLORS = {
-			13, // MAGENTA
-			5, // PURPLE
-			12, // BLUE
-			14, // CYAN
-	};
-
 	public static String encode(char c) {
 		return switch (c) {
 			case '&' -> "&amp;";
@@ -310,27 +301,6 @@ public class TagUtils {
 					writer.append("=\"");
 					encode(writer, entry.getValue());
 					writer.append('"');
-				}
-			}
-		}
-	}
-
-	public static void ansiAttributes(AnsiComponent component, @Nullable Map<String, String> attributes, int depth) {
-		int col = ANSI_COLORS[depth % ANSI_COLORS.length];
-
-		if (attributes != null) {
-			var sb = new StringBuilder();
-
-			for (var entry : attributes.entrySet()) {
-				component.append(' ');
-				component.append(Ansi.lime(entry.getKey()));
-
-				if (!entry.getValue().equals("<NO_VALUE>")) {
-					component.append(Ansi.of("=\"").color(col));
-					encode(sb, entry.getValue());
-					component.append(Ansi.yellow(sb.toString()));
-					sb.setLength(0);
-					component.append(Ansi.of("\"").color(col));
 				}
 			}
 		}

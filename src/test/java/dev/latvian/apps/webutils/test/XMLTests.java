@@ -1,6 +1,7 @@
 package dev.latvian.apps.webutils.test;
 
-import dev.latvian.apps.webutils.ansi.Log;
+import dev.latvian.apps.ansi.log.Log;
+import dev.latvian.apps.webutils.html.TagANSI;
 import dev.latvian.apps.webutils.html.XMLParser;
 import org.junit.jupiter.api.Test;
 
@@ -16,6 +17,6 @@ public class XMLTests {
 				  <heading>Reminder</heading>
 				  <body a="b"c="d">Don't <b>forget</b> me this weekend!</body>
 				</note>""", false);
-		Log.info("XML:\n" + xml.toAnsi(true));
+		Log.info("XML:\n" + TagANSI.of(xml, true));
 	}
 }
