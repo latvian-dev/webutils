@@ -10,9 +10,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-public interface Tag extends TagConvertible {
+public interface Tag extends TagFunction {
 	@Override
-	default void appendHTMLTag(Tag parent) {
+	default void acceptTag(Tag parent) {
 		parent.add(this);
 	}
 
@@ -69,8 +69,11 @@ public interface Tag extends TagConvertible {
 		throw new IllegalStateException("This tag type does not support children tags");
 	}
 
-	default Tag add(TagConvertible tag) {
-		tag.appendHTMLTag(this);
+	default Tag add(@Nullable TagFunction function) {
+		if (function != null) {
+			function.acceptTag(this);
+		}
+
 		return this;
 	}
 

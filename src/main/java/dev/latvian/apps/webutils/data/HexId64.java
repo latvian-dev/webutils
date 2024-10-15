@@ -1,12 +1,12 @@
 package dev.latvian.apps.webutils.data;
 
 import dev.latvian.apps.webutils.html.Tag;
-import dev.latvian.apps.webutils.html.TagConvertible;
+import dev.latvian.apps.webutils.html.TagFunction;
 
 import java.util.function.BiConsumer;
 import java.util.function.LongSupplier;
 
-public class HexId64 implements TagConvertible, LongSupplier {
+public class HexId64 implements TagFunction, LongSupplier {
 	public static final HexId64 NONE = new HexId64(0L);
 	public static final HexId64 SELF = new HexId64(-1L);
 	public static BiConsumer<Tag, HexId64> TAG = (parent, id) -> parent.string(id.toString());
@@ -61,7 +61,7 @@ public class HexId64 implements TagConvertible, LongSupplier {
 	}
 
 	@Override
-	public void appendHTMLTag(Tag parent) {
+	public void acceptTag(Tag parent) {
 		TAG.accept(parent, this);
 	}
 
