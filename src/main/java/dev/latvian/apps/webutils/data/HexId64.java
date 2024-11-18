@@ -1,15 +1,27 @@
 package dev.latvian.apps.webutils.data;
 
+import dev.latvian.apps.tinyserver.http.response.error.client.BadRequestError;
 import dev.latvian.apps.webutils.html.Tag;
 import dev.latvian.apps.webutils.html.TagFunction;
 
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.function.LongSupplier;
 
 public class HexId64 implements TagFunction, LongSupplier {
 	public static final HexId64 NONE = new HexId64(0L);
 	public static final HexId64 SELF = new HexId64(-1L);
 	public static BiConsumer<Tag, HexId64> TAG = (parent, id) -> parent.string(id.toString());
+
+	public static final Function<String, HexId64> MAPPER = string -> {
+		if (string == null || string.isBlank() || string.charAt(0) == '-') {
+			return NONE;
+		} else if (!isValid(string)) {
+			throw new BadRequestError("Invalid ID: " + string);
+		} else {
+			return of(string);
+		}
+	};
 
 	public static boolean isValid(String id) {
 		if (id == null || id.isBlank() || id.length() > 16) {
