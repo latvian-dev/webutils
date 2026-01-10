@@ -5,16 +5,17 @@ import dev.latvian.apps.tinyserver.http.response.HTTPStatus;
 
 import java.util.List;
 
-public abstract class RootTag extends PairedTag {
+public abstract class RootTag<REQ> extends PairedTag {
+	public final REQ request;
 	public final String path;
 	public final String title;
 	public final String description;
 	public final Tag head;
 	public final Tag body;
 
-	public RootTag(String path, String title, String description) {
+	public RootTag(REQ request, String path, String title, String description) {
 		super("html");
-
+		this.request = request;
 		this.path = path;
 		this.title = title;
 		this.description = description;
@@ -77,7 +78,7 @@ public abstract class RootTag extends PairedTag {
 	}
 
 	@Override
-	protected RootTag copy0() {
+	protected RootTag<REQ> copy0() {
 		throw new IllegalStateException("Can't copy root tag");
 	}
 

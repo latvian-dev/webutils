@@ -5,19 +5,10 @@ plugins {
 	id 'maven-publish'
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
-
 def ENV = System.getenv()
 version = "${project_version}-${ENV.GITHUB_RUN_NUMBER ? 'build.' + ENV.GITHUB_RUN_NUMBER : 'local.' + Instant.now().epochSecond}"
 archivesBaseName = 'webutils'
 group = 'dev.latvian.apps'
-
-compileJava.options.encoding = 'UTF-8'
-
-tasks.withType(JavaCompile) {
-	options.encoding = 'UTF-8'
-}
 
 repositories {
 	mavenCentral()
@@ -31,13 +22,13 @@ repositories {
 }
 
 dependencies {
-	implementation('net.dv8tion:JDA:5.2.1')
-	compileOnly('dev.latvian.apps:ansi:1.0.0-build.9')
-	implementation('dev.latvian.apps:tiny-java-server:1.0.0-build.21')
-	implementation('org.mongodb:mongodb-driver-sync:5.0.0')
+	implementation('net.dv8tion:JDA:6.2.0')
+	compileOnly('dev.latvian.apps:ansi:1.0.0-build.12')
+	implementation('dev.latvian.apps:tiny-java-server:1.0.0-build.34')
+	implementation('org.mongodb:mongodb-driver-sync:5.6.2')
 	compileOnly('org.jetbrains:annotations:24.0.1')
 
-	testImplementation('dev.latvian.apps:ansi:1.0.0-build.9')
+	testImplementation('dev.latvian.apps:ansi:1.0.0-build.12')
 	testImplementation('org.junit.jupiter:junit-jupiter-api:5.10.0')
 	testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.10.0')
 	testImplementation('junit:junit:4.13.2')
@@ -56,11 +47,13 @@ test {
 compileJava {
 	options.encoding = "UTF-8"
 	options.release.set(21)
+	options.compilerArgs << '-parameters' << '-Xmaxerrs' << '1000'
 }
 
 java {
 	sourceCompatibility = targetCompatibility = '21'
 	withSourcesJar()
+	// withJavadocJar()
 }
 
 publishing {
