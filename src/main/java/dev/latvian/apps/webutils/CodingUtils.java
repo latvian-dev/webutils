@@ -80,7 +80,7 @@ public interface CodingUtils {
 		}
 	}
 
-	static String encodeURL(Map<String, String> map, String sep) {
+	static String encodeURL(String sep, Map<String, String> map) {
 		StringBuilder sb = new StringBuilder();
 
 		boolean first = true;
@@ -101,6 +101,10 @@ public interface CodingUtils {
 		}
 
 		return sb.toString();
+	}
+
+	static String encodeURL(Map<String, String> map) {
+		return encodeURL("&", map);
 	}
 
 	static Map<String, String> decodeHeaders(String data) {
@@ -129,21 +133,5 @@ public interface CodingUtils {
 		}
 
 		return m;
-	}
-
-	static String formData(Map<String, Object> map) {
-		var sb = new StringBuilder();
-
-		for (var entry : map.entrySet()) {
-			if (sb.length() > 0) {
-				sb.append('&');
-			}
-
-			sb.append(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8));
-			sb.append('=');
-			sb.append(URLEncoder.encode(entry.getValue().toString(), StandardCharsets.UTF_8));
-		}
-
-		return sb.toString();
 	}
 }
