@@ -66,7 +66,7 @@ public interface CodingUtils {
 
 	static String encodeURL(String string) {
 		try {
-			return URLEncoder.encode(string, StandardCharsets.UTF_8);
+			return URLEncoder.encode(string, StandardCharsets.UTF_8).replace("+", "%20");
 		} catch (Exception ex) {
 			return string;
 		}
