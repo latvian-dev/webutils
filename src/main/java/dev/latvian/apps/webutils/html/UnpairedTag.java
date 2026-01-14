@@ -66,4 +66,9 @@ public class UnpairedTag implements Tag {
 	@Override
 	public void appendRaw(StringBuilder builder) {
 	}
+
+	@Override
+	public String getPrefix() {
+		return parent == null ? "" : parent.getPrefix();
+	}
 }

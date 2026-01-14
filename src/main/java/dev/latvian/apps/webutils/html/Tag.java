@@ -431,15 +431,15 @@ public interface Tag extends TagFunction {
 		return script(src).attr("async");
 	}
 
-	default FormTag form(String method) {
-		var form = new FormTag();
+	default FormTag form(String prefix, String method) {
+		var form = new FormTag(prefix);
 		form.attr("method", method);
 		add(form);
 		return form;
 	}
 
-	default FormTag form(String method, String action) {
-		return (FormTag) form(method).attr("action", action);
+	default FormTag form(String prefix, String method, String action) {
+		return (FormTag) form(prefix, method).attr("action", action);
 	}
 
 	default Tag option(String value) {
@@ -548,8 +548,8 @@ public interface Tag extends TagFunction {
 		return label(forId).string(string);
 	}
 
-	default Tag textarea(String name, int rows, int cols) {
-		return paired("textarea").attr("id", getPrefix() + name).attr("name", name).attr("rows", rows).attr("cols", cols);
+	default Tag textarea(String name, int rows) {
+		return paired("textarea").attr("id", getPrefix() + name).attr("name", name).attr("rows", rows);
 	}
 
 	default Tag checkbox(String name, boolean checked) {
