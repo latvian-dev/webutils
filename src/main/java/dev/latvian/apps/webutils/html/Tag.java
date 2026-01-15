@@ -450,6 +450,22 @@ public interface Tag extends TagFunction {
 		return paired("option").attr("value", value);
 	}
 
+	default Tag selected(boolean selected) {
+		if (selected) {
+			attr("selected");
+		}
+
+		return this;
+	}
+
+	default Tag checked(boolean checked) {
+		if (checked) {
+			attr("checked");
+		}
+
+		return this;
+	}
+
 	default Tag iframe() {
 		return paired("iframe");
 	}
@@ -557,20 +573,14 @@ public interface Tag extends TagFunction {
 	}
 
 	default Tag checkbox(String name, boolean checked) {
-		var t = input("checkbox", name);
-
-		if (checked) {
-			t.attr("checked");
-		}
-
-		return t;
+		return input("checkbox", name).checked(checked);
 	}
 
 	default Tag button() {
 		return paired("button");
 	}
 
-	default Tag radio(String group, Object value) {
-		return input("radio").id(getPrefix() + group + "-" + value).name(group).value(value);
+	default Tag radio(String group, Object value, boolean checked) {
+		return input("radio").id(getPrefix() + group + "-" + value).name(group).value(value).checked(checked);
 	}
 }
