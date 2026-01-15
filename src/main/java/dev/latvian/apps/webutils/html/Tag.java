@@ -164,7 +164,7 @@ public interface Tag extends TagFunction {
 
 	// Attributes
 
-	default Tag id(String id) {
+	default Tag id(Object id) {
 		return attr("id", id);
 	}
 
@@ -184,11 +184,11 @@ public interface Tag extends TagFunction {
 		return attr("style", style);
 	}
 
-	default Tag value(String value) {
+	default Tag value(Object value) {
 		return attr("value", value);
 	}
 
-	default Tag value(String value, String min, String max, String step) {
+	default Tag value(Object value, Object min, Object max, String step) {
 		var t = attr("value", value).attr("min", min).attr("max", max);
 
 		if (!step.isEmpty()) {
@@ -198,7 +198,7 @@ public interface Tag extends TagFunction {
 		return t;
 	}
 
-	default Tag pattern(String value) {
+	default Tag pattern(Object value) {
 		return attr("pattern", value);
 	}
 
@@ -210,8 +210,12 @@ public interface Tag extends TagFunction {
 		return attr("loading", "lazy");
 	}
 
-	default Tag target(String target) {
+	default Tag target(Object target) {
 		return attr("target", target);
+	}
+
+	default Tag name(Object name) {
+		return attr("name", name);
 	}
 
 	// Unpaired
@@ -286,7 +290,7 @@ public interface Tag extends TagFunction {
 		return paired("section");
 	}
 
-	default Tag section(String id) {
+	default Tag section(Object id) {
 		return section().id(id);
 	}
 
@@ -532,12 +536,12 @@ public interface Tag extends TagFunction {
 		return input().attr("type", type);
 	}
 
-	default Tag input(String type, String name) {
-		return input(type).attr("id", getPrefix() + name).attr("name", name);
+	default Tag input(String type, Object name) {
+		return input(type).id(getPrefix() + name).name(name);
 	}
 
-	default Tag select(String name) {
-		return paired("select").attr("id", getPrefix() + name).attr("name", name);
+	default Tag select(Object name) {
+		return paired("select").id(getPrefix() + name).name(name);
 	}
 
 	default Tag label(String forId) {
@@ -549,7 +553,7 @@ public interface Tag extends TagFunction {
 	}
 
 	default Tag textarea(String name, int rows) {
-		return paired("textarea").attr("id", getPrefix() + name).attr("name", name).attr("rows", rows);
+		return paired("textarea").id(getPrefix() + name).name(name).attr("rows", rows);
 	}
 
 	default Tag checkbox(String name, boolean checked) {
@@ -564,5 +568,9 @@ public interface Tag extends TagFunction {
 
 	default Tag button() {
 		return paired("button");
+	}
+
+	default Tag radio(String group, Object value) {
+		return input("radio").id(getPrefix() + group + "-" + value).name(group).value(value);
 	}
 }
