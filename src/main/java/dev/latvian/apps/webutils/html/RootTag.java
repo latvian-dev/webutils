@@ -25,7 +25,9 @@ public abstract class RootTag<REQ> extends PairedTag {
 		this.head.meta("http-equiv", "X-UA-Compatible", "content", "IE=edge");
 		this.head.meta("name", "viewport", "content", "width=device-width, initial-scale=1");
 
-		head.titleTag().string(title);
+		var siteName = getSiteName();
+
+		head.titleTag().string(title + " - " + siteName);
 
 		if (!description.isEmpty()) {
 			head.meta("name", "description", "content", description);
@@ -47,8 +49,6 @@ public abstract class RootTag<REQ> extends PairedTag {
 
 		this.head.meta("property", "og:type", "content", "website");
 		this.head.meta("property", "og:url", "content", rootUrl + path);
-
-		var siteName = getSiteName();
 
 		if (!siteName.isEmpty()) {
 			this.head.meta("property", "og:site_name", "content", siteName);
