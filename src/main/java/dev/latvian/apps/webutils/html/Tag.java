@@ -202,8 +202,12 @@ public interface Tag extends TagFunction {
 		return attr("pattern", value);
 	}
 
+	default Tag required(boolean required) {
+		return required ? attr("required") : this;
+	}
+
 	default Tag required() {
-		return attr("required");
+		return required(true);
 	}
 
 	default Tag lazyLoading() {
