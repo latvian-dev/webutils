@@ -46,9 +46,7 @@ public abstract class RootTag<REQ> extends PairedTag {
 		}
 
 		var rootUrl = getRootUrl();
-
-		this.head.meta("property", "og:type", "content", "website");
-		this.head.meta("property", "og:url", "content", rootUrl + path);
+		embedTags(rootUrl);
 
 		if (!siteName.isEmpty()) {
 			this.head.meta("property", "og:site_name", "content", siteName);
@@ -60,17 +58,21 @@ public abstract class RootTag<REQ> extends PairedTag {
 			this.head.meta("property", "og:description", "content", description);
 		}
 
-		var iconPath = getIconPath();
+		this.head.meta("property", "og:url", "content", getEmbedUrl(rootUrl, path));
+		this.body = paired("body");
+	}
+
+	public void embedTags(String rootUrl) {
+		this.head.meta("property", "og:type", "content", "website");
+
+		var iconPath = getIconPath(rootUrl);
 
 		if (!iconPath.isEmpty()) {
 			var iconSize = getIconSize();
-
-			head.meta("property", "og:image", "content", rootUrl + iconPath);
+			head.meta("property", "og:image", "content", iconPath);
 			head.meta("property", "og:image:width", "content", iconSize);
 			head.meta("property", "og:image:height", "content", iconSize);
 		}
-
-		this.body = paired("body");
 	}
 
 	public void refresh(String url) {
@@ -112,7 +114,11 @@ public abstract class RootTag<REQ> extends PairedTag {
 		return 48;
 	}
 
-	public String getIconPath() {
+	public String getIconPath(String rootUrl) {
 		return "";
+	}
+
+	public String getEmbedUrl(String rootUrl, String path) {
+		return rootUrl + path;
 	}
 }
