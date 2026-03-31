@@ -5,6 +5,8 @@ import java.util.Random;
 @SuppressWarnings("ManualMinMaxCalculation")
 public interface MathUtils {
 	Random RANDOM = new Random();
+	double LOG_10_OF_1000 = Math.log10(1000D);
+	double LOG_10_OF_1024 = Math.log10(1024D);
 
 	static int floor(float f) {
 		int i = (int) f;

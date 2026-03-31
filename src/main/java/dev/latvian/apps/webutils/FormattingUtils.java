@@ -1,5 +1,6 @@
 package dev.latvian.apps.webutils;
 
+import dev.latvian.apps.webutils.math.MathUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
@@ -13,6 +14,9 @@ public interface FormattingUtils {
 	Pattern REMOVE_DASHES = Pattern.compile("-{2,}");
 	Pattern NON_W_PATTERN = Pattern.compile("\\W");
 	Pattern STACK_AT_PATTERN = Pattern.compile("([ \\t]+at )([\\w./$@]+)\\.([\\w/$]+)\\.(<init>|[\\w$]+)\\((Unknown Source|\\.dynamic|Native Method|[\\w.$]+:\\d+)\\)(?: ~?\\[.*:.*])?(?: \\{.*})?");
+	DecimalFormat BYTE_SIZE_FORMAT = new DecimalFormat("#,##0.#");
+	String[] BINARY_BYTE_SIZE_UNITS = new String[]{"B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB"};
+	String[] SI_BYTE_SIZE_UNITS = new String[]{"B", "KB", "MB", "GB", "TB", "PB", "EB"};
 
 	static String format(long number) {
 		return LONG_FORMAT.format(number);
@@ -158,5 +162,27 @@ public interface FormattingUtils {
 
 	static String percent(long value, long total) {
 		return percent((double) value / (double) total);
+	}
+
+	static String binaryByteSize(long size) {
+		if (size <= 0L) {
+			return "0 B";
+		} else if (size < 1024L) {
+			return size + " B";
+		}
+
+		int digitGroups = (int) (Math.log10(size) / MathUtils.LOG_10_OF_1024);
+		return BYTE_SIZE_FORMAT.format(size / Math.pow(1024D, digitGroups)) + " " + BINARY_BYTE_SIZE_UNITS[digitGroups];
+	}
+
+	static String siByteSize(long size) {
+		if (size <= 0L) {
+			return "0 B";
+		} else if (size < 1000L) {
+			return size + " B";
+		}
+
+		int digitGroups = (int) (Math.log10(size) / MathUtils.LOG_10_OF_1000);
+		return BYTE_SIZE_FORMAT.format(size / Math.pow(1000D, digitGroups)) + " " + SI_BYTE_SIZE_UNITS[digitGroups];
 	}
 }
