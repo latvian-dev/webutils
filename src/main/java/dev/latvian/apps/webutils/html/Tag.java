@@ -580,6 +580,10 @@ public interface Tag extends TagFunction {
 		return input("checkbox", name).checked(checked);
 	}
 
+	default Tag checkboxWithLabel(String name, boolean checked) {
+		return checkbox(name, checked).end().label(name);
+	}
+
 	default Tag button() {
 		return paired("button");
 	}
