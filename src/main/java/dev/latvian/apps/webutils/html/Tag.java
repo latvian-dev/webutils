@@ -390,8 +390,13 @@ public interface Tag extends TagFunction {
 		return a("#").attr("onclick", click);
 	}
 
-	default Tag time(Instant instant) {
+	default Tag timeTag(Instant instant) {
 		return paired("time").attr("datetime", instant.toString());
+	}
+
+	default Tag time(Instant instant) {
+		var str = instant.toString();
+		return paired("time").attr("datetime", str).string(str);
 	}
 
 	default Tag table() {
