@@ -1,7 +1,7 @@
 package dev.latvian.apps.webutils.html;
 
-import dev.latvian.apps.tinyserver.content.MimeType;
-import dev.latvian.apps.tinyserver.content.ResponseContent;
+import dev.latvian.apps.tinyhttp.content.MimeType;
+import dev.latvian.apps.tinyhttp.content.ResponseContent;
 
 import java.io.IOException;
 import java.io.OutputStream;

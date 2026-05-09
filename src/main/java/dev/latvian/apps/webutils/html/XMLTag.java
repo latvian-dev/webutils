@@ -1,8 +1,8 @@
 package dev.latvian.apps.webutils.html;
 
-import dev.latvian.apps.tinyserver.content.MimeType;
-import dev.latvian.apps.tinyserver.http.response.HTTPResponse;
-import dev.latvian.apps.tinyserver.http.response.HTTPStatus;
+import dev.latvian.apps.tinyhttp.content.MimeType;
+import dev.latvian.apps.tinyhttp.http.response.HTTPResponse;
+import dev.latvian.apps.tinyhttp.http.response.HTTPStatus;
 
 public class XMLTag extends PairedTag {
 	public XMLTag(String tag) {

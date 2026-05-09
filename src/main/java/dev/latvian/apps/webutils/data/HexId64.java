@@ -1,6 +1,6 @@
 package dev.latvian.apps.webutils.data;
 
-import dev.latvian.apps.tinyserver.http.response.error.client.BadRequestError;
+import dev.latvian.apps.tinyhttp.http.response.error.client.BadRequestError;
 import dev.latvian.apps.webutils.html.Tag;
 import dev.latvian.apps.webutils.html.TagFunction;
 
