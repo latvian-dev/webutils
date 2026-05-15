@@ -20,8 +20,29 @@ public interface Tag extends TagFunction {
 		return this;
 	}
 
+	@Nullable
+	default Tag endOrNull() {
+		return null;
+	}
+
 	default Tag end() {
-		throw new IllegalStateException("This tag type does not support end()");
+		var tag = endOrNull();
+
+		if (tag == null) {
+			throw new IllegalStateException("This tag type does not support end()");
+		}
+
+		return tag;
+	}
+
+	default RootTag<?> root() {
+		var parent = endOrNull();
+
+		if (parent == null) {
+			throw new IllegalStateException("This tag type does not support root()");
+		}
+
+		return parent.root();
 	}
 
 	void append(StringBuilder builder, boolean header);
@@ -390,13 +411,11 @@ public interface Tag extends TagFunction {
 		return a("#").attr("onclick", click);
 	}
 
-	default Tag timeTag(Instant instant) {
-		return paired("time").attr("datetime", instant.toString());
-	}
-
 	default Tag time(Instant instant) {
 		var str = instant.toString();
-		return paired("time").attr("datetime", str).string(str);
+		var tag = paired("time").attr("datetime", str);
+		root().formatTimestamp(tag, instant, str);
+		return tag;
 	}
 
 	default Tag table() {

@@ -4,6 +4,9 @@ import dev.latvian.apps.webutils.math.MathUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,6 +20,9 @@ public interface FormattingUtils {
 	DecimalFormat BYTE_SIZE_FORMAT = new DecimalFormat("#,##0.#");
 	String[] BINARY_BYTE_SIZE_UNITS = new String[]{"B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB"};
 	String[] SI_BYTE_SIZE_UNITS = new String[]{"B", "KB", "MB", "GB", "TB", "PB", "EB"};
+
+	DateTimeFormatter LONG_UTC_TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("EEEE, d MMM yyyy, HH:mm:ss.SSS").withZone(ZoneOffset.UTC);
+	DateTimeFormatter LONG_EST_TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("EEEE, d MMM yyyy, HH:mm:ss.SSS").withZone(ZoneId.of("America/New_York"));
 
 	static String format(long number) {
 		return LONG_FORMAT.format(number);

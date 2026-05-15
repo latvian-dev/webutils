@@ -2,7 +2,9 @@ package dev.latvian.apps.webutils.html;
 
 import dev.latvian.apps.tinyhttp.http.response.HTTPResponse;
 import dev.latvian.apps.tinyhttp.http.response.HTTPStatus;
+import dev.latvian.apps.webutils.FormattingUtils;
 
+import java.time.Instant;
 import java.util.List;
 
 public abstract class RootTag<REQ> extends PairedTag {
@@ -110,6 +112,11 @@ public abstract class RootTag<REQ> extends PairedTag {
 		return asResponse(HTTPStatus.OK, true);
 	}
 
+	@Override
+	public RootTag<?> root() {
+		return this;
+	}
+
 	public abstract String getSiteName();
 
 	public abstract String getRootUrl();
@@ -132,5 +139,9 @@ public abstract class RootTag<REQ> extends PairedTag {
 
 	public String getEmbedUrl(String rootUrl, String path) {
 		return rootUrl + path;
+	}
+
+	public void formatTimestamp(Tag tag, Instant instant, String instantString) {
+		tag.string(FormattingUtils.LONG_UTC_TIMESTAMP_FORMAT.format(instant));
 	}
 }

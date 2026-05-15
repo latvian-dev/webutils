@@ -26,7 +26,7 @@ repositories {
 dependencies {
 	implementation('net.dv8tion:JDA:6.4.1')
 	compileOnly('dev.latvian.apps:ansi:1.0.0-build.12')
-	implementation('dev.latvian.apps:tiny-http:1.0.0-build.46')
+	implementation('dev.latvian.apps:tiny-http:1.0.0-build.47')
 	implementation('org.mongodb:mongodb-driver-sync:5.7.0-beta1')
 	compileOnly('org.jetbrains:annotations:24.0.1')
 

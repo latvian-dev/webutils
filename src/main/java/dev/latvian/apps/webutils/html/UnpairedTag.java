@@ -16,11 +16,8 @@ public class UnpairedTag implements Tag {
 	}
 
 	@Override
-	public Tag end() {
-		if (parent == null) {
-			throw new IllegalStateException("This tag does not have a parent tag");
-		}
-
+	@Nullable
+	public Tag endOrNull() {
 		return parent;
 	}
 
