@@ -1,5 +1,6 @@
 package dev.latvian.apps.webutils.html;
 
+import dev.latvian.apps.tinyhttp.content.MimeType;
 import dev.latvian.apps.tinyhttp.http.response.HTTPResponse;
 import dev.latvian.apps.tinyhttp.http.response.HTTPStatus;
 import dev.latvian.apps.webutils.FormattingUtils;
@@ -60,30 +61,32 @@ public abstract class RootTag<REQ> extends PairedTag {
 		}
 
 		var rootUrl = getRootUrl();
-		embedTags(rootUrl);
-
-		if (!siteName.isEmpty()) {
-			this.head.meta("property", "og:site_name", "content", siteName);
-		}
-
-		this.head.meta("property", "og:title", "content", title);
-
-		if (!description.isEmpty()) {
-			this.head.meta("property", "og:description", "content", description);
-		}
-
-		this.head.meta("property", "og:url", "content", getEmbedUrl(rootUrl, path));
+		embedTags(rootUrl, path, siteName, title, description);
 		this.body = paired("body");
 	}
 
-	public void embedTags(String rootUrl) {
-		this.head.meta("property", "og:type", "content", "website");
+	public void embedTags(String rootUrl, String path, String siteName, String title, String description) {
+		head.meta("property", "og:type", "content", "website");
+		head.meta("property", "og:locale", "content", "en_US");
+
+		if (!siteName.isEmpty()) {
+			head.meta("property", "og:site_name", "content", siteName);
+		}
+
+		head.meta("property", "og:title", "content", title);
+
+		if (!description.isEmpty()) {
+			head.meta("property", "og:description", "content", description);
+		}
+
+		head.meta("property", "og:url", "content", getEmbedUrl(rootUrl, path));
 
 		var iconPath = getIconPath(rootUrl);
 
 		if (!iconPath.isEmpty()) {
 			var iconSize = getIconSize();
 			head.meta("property", "og:image", "content", iconPath);
+			head.meta("property", "og:image:type", "content", MimeType.PNG);
 			head.meta("property", "og:image:width", "content", iconSize);
 			head.meta("property", "og:image:height", "content", iconSize);
 		}
